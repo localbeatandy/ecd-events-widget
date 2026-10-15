@@ -154,6 +154,7 @@ input,select{font-family:inherit;font-size:inherit}
   font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
   color:var(--green);white-space:nowrap;padding-top:3px}
 .tag svg{flex:none}
+.tag2{opacity:.62}
 .meta{margin:9px 0 0;font-size:14.5px;color:var(--ink-mute);display:flex;gap:8px;
   flex-wrap:wrap;align-items:center}
 .meta .when{color:var(--green);font-weight:700}
@@ -1051,14 +1052,14 @@ function dateRange(){
 function matchText(e){
   if(!S.q) return true;
   const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+e.cat+' '+(e.topics||[]).join(' '))
+  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
     .toLowerCase().includes(q);
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
-function matchCat(e){ return S.cats.size===0 || S.cats.has(e.cat); }
+function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
 function filtered(){ return EV.filter(e=>matchText(e)&&matchDate(e)&&matchCat(e)); }
 function catCounts(){
-  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>c[e.cat]=(c[e.cat]||0)+1); return c;
+  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>(e.cats||[e.cat]).forEach(k=>c[k]=(c[k]||0)+1)); return c;
 }
 
 /* ---------- shared UI builders ---------- */
@@ -1066,7 +1067,7 @@ function cardHTML(e,i){
   return '<button class="card" data-i="'+i+'">'
     +'<span class="card-top">'
       +'<h3>'+esc(e.name)+'</h3>'
-      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tag tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'</span>'
     +'<span class="meta"><span class="when">'+fmtWhen(e)+'</span>'
       +'<span class="sep">\u00b7</span><span>'+esc(e.venue||'Venue to be confirmed')+'</span>'
@@ -1198,7 +1199,7 @@ const drawer=document.getElementById('drawer'), scrim=document.getElementById('s
 function openDrawer(e){
   drawer.innerHTML='<div class="dr-hero">'
     +'<button class="dr-close" id="drx" aria-label="Close">&times;</button>'
-    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tagw tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'<h2>'+esc(e.name)+'</h2></div>'
     +'<div class="dr-body">'
     +'<div class="dr-row"><span>When</span><span><b>'+fmtWhen(e)+'</b><br>'
@@ -1251,7 +1252,7 @@ function render(){
   drawPins(CUR);
   if(MAPOK){
     const vens=new Set(CUR.filter(e=>e.lat!=null).map(e=>e.venueRaw));
-    const pcats=CAT_ORDER.filter(c=>CUR.some(e=>e.cat===c&&e.lat!=null));
+    const pcats=CAT_ORDER.filter(c=>CUR.some(e=>(e.cats||[e.cat]).includes(c)&&e.lat!=null));
     document.getElementById('legend').innerHTML='Venues on the map'
       +'<span>'+vens.size+' across Evergreen, Conifer and the foothills</span>'
       +(pcats.length?'<div class="lgrid">'+pcats.map(c=>'<span class="litem"><i style="background:'
@@ -1396,6 +1397,7 @@ input,select{font-family:inherit;font-size:inherit}
   font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
   color:var(--green);white-space:nowrap;padding-top:3px}
 .tag svg{flex:none}
+.tag2{opacity:.62}
 .meta{margin:9px 0 0;font-size:14.5px;color:var(--ink-mute);display:flex;gap:8px;
   flex-wrap:wrap;align-items:center}
 .meta .when{color:var(--green);font-weight:700}
@@ -1607,14 +1609,14 @@ function dateRange(){
 function matchText(e){
   if(!S.q) return true;
   const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+e.cat+' '+(e.topics||[]).join(' '))
+  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
     .toLowerCase().includes(q);
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
-function matchCat(e){ return S.cats.size===0 || S.cats.has(e.cat); }
+function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
 function filtered(){ return EV.filter(e=>matchText(e)&&matchDate(e)&&matchCat(e)); }
 function catCounts(){
-  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>c[e.cat]=(c[e.cat]||0)+1); return c;
+  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>(e.cats||[e.cat]).forEach(k=>c[k]=(c[k]||0)+1)); return c;
 }
 
 /* ---------- shared UI builders ---------- */
@@ -1622,7 +1624,7 @@ function cardHTML(e,i){
   return '<button class="card" data-i="'+i+'">'
     +'<span class="card-top">'
       +'<h3>'+esc(e.name)+'</h3>'
-      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tag tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'</span>'
     +'<span class="meta"><span class="when">'+fmtWhen(e)+'</span>'
       +'<span class="sep">\u00b7</span><span>'+esc(e.venue||'Venue to be confirmed')+'</span>'
@@ -1745,7 +1747,7 @@ function render(){
       }
       html+='<button class="card" data-i="'+i+'">'
         +'<span class="card-top"><h3>'+esc(e.name)+'</h3>'
-          +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+          +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tag tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
           +'<svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'
         +'</span>'
         +'<span class="meta"><span class="when">'+fmtTime(e)+'</span><span class="sep">\u00b7</span>'
@@ -1785,7 +1787,7 @@ const drawer=document.getElementById('drawer'), scrim=document.getElementById('s
 function openDrawer(e){
   drawer.innerHTML='<div class="dr-hero">'
     +'<button class="dr-close" id="drx" aria-label="Close">&times;</button>'
-    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tagw tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'<h2>'+esc(e.name)+'</h2></div>'
     +'<div class="dr-body">'
     +'<div class="dr-row"><span>When</span><span><b>'+fmtWhen(e)+'</b><br>'
@@ -1956,6 +1958,7 @@ input,select{font-family:inherit;font-size:inherit}
   font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
   color:var(--green);white-space:nowrap;padding-top:3px}
 .tag svg{flex:none}
+.tag2{opacity:.62}
 .meta{margin:9px 0 0;font-size:14.5px;color:var(--ink-mute);display:flex;gap:8px;
   flex-wrap:wrap;align-items:center}
 .meta .when{color:var(--green);font-weight:700}
@@ -2217,14 +2220,14 @@ function dateRange(){
 function matchText(e){
   if(!S.q) return true;
   const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+e.cat+' '+(e.topics||[]).join(' '))
+  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
     .toLowerCase().includes(q);
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
-function matchCat(e){ return S.cats.size===0 || S.cats.has(e.cat); }
+function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
 function filtered(){ return EV.filter(e=>matchText(e)&&matchDate(e)&&matchCat(e)); }
 function catCounts(){
-  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>c[e.cat]=(c[e.cat]||0)+1); return c;
+  const c={}; EV.filter(e=>matchText(e)&&matchDate(e)).forEach(e=>(e.cats||[e.cat]).forEach(k=>c[k]=(c[k]||0)+1)); return c;
 }
 
 /* ---------- shared UI builders ---------- */
@@ -2232,7 +2235,7 @@ function cardHTML(e,i){
   return '<button class="card" data-i="'+i+'">'
     +'<span class="card-top">'
       +'<h3>'+esc(e.name)+'</h3>'
-      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+      +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tag tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'</span>'
     +'<span class="meta"><span class="when">'+fmtWhen(e)+'</span>'
       +'<span class="sep">\u00b7</span><span>'+esc(e.venue||'Venue to be confirmed')+'</span>'
@@ -2388,7 +2391,7 @@ const drawer=document.getElementById('drawer'), scrim=document.getElementById('s
 function openDrawer(e){
   drawer.innerHTML='<div class="dr-hero">'
     +'<button class="dr-close" id="drx" aria-label="Close">&times;</button>'
-    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'
+    +'<span class="tagw">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tagw tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
     +'<h2>'+esc(e.name)+'</h2></div>'
     +'<div class="dr-body">'
     +'<div class="dr-row"><span>When</span><span><b>'+fmtWhen(e)+'</b><br>'
