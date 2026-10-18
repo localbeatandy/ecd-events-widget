@@ -213,6 +213,7 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .pagehead p{font-size:17px}
   .seg button{padding:6px 10px}
   .chip{padding:5px 9px 5px 8px;gap:5px}
+  .card-top{flex-wrap:wrap;gap:4px 12px}.card h3{flex-basis:100%}
   .seg,.chips{gap:5px}
   .frow + .frow{margin-top:10px;padding-top:10px}
   .wrap{padding:0 14px}
@@ -222,7 +223,6 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .mobsel{display:block;width:100%;max-width:360px;padding:10px 12px;
     font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--charcoal);background:var(--cream);border:1px solid var(--line);border-radius:3px}
-  button[data-fmt="map"]{display:none}
 }
 /* required styles */
 
@@ -969,8 +969,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .dr-note b{font-family:var(--label);font-size:9.5px;font-weight:700;letter-spacing:.13em;
   text-transform:uppercase;color:var(--green);display:block;margin-bottom:4px}
 @media (max-width:940px){
-  .split{grid-template-columns:1fr}.mapwrap{position:static}#map{height:380px}
+  .split{grid-template-columns:minmax(0,1fr)}.mapwrap{position:static}#map{height:380px}
   .results{max-height:520px}
+}
+@media (max-width:760px){
+  .mapwrap{order:-1}#map{height:440px}
 }
 </style><style>body{margin:0;background:#FAF6EF;} .filterband{position:static !important;} .seg button,.chip,.clearbtn,.todaybtn,.venue-clear,.pager button{border-radius:3px !important}</style><div class="filterband"><div class="wrap"><div class="filters" id="filters"></div></div></div>
 <div class="wrap">
@@ -1216,6 +1219,12 @@ try{
   if(typeof L!=='undefined'){
     map=L.map('map',{scrollWheelZoom:true,zoomControl:false}).setView([39.63,-105.32],11);
     L.control.zoom({position:'topright'}).addTo(map);
+    // Map can be built while its view is hidden (phones open on List); refit when it gets a real size.
+    let _mw=-1; new ResizeObserver(()=>{const w=document.getElementById('map').clientWidth;
+      if(Math.abs(w-_mw)>40&&w>0){map.invalidateSize({animate:false});
+        if(markers.length){map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
+          if(map.getSize().x>600) map.setZoom(Math.min(map.getZoom()+1,13),{animate:false});}}
+      _mw=w;}).observe(document.getElementById('map'));
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
       {attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxZoom:16}).addTo(map);
     /* town & road labels (Esri reference layer) — under the pins */
@@ -1252,7 +1261,7 @@ function drawPins(list){
   });
   if(markers.length){
     map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
-    map.setZoom(Math.min(map.getZoom()+1,13),{animate:false});
+    if(map.getSize().x>600) map.setZoom(Math.min(map.getZoom()+1,13),{animate:false});
   }
 }
 function focus(i,fromMap){
@@ -1573,6 +1582,7 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .pagehead p{font-size:17px}
   .seg button{padding:6px 10px}
   .chip{padding:5px 9px 5px 8px;gap:5px}
+  .card-top{flex-wrap:wrap;gap:4px 12px}.card h3{flex-basis:100%}
   .seg,.chips{gap:5px}
   .frow + .frow{margin-top:10px;padding-top:10px}
   .wrap{padding:0 14px}
@@ -1582,7 +1592,6 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .mobsel{display:block;width:100%;max-width:360px;padding:10px 12px;
     font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--charcoal);background:var(--cream);border:1px solid var(--line);border-radius:3px}
-  button[data-fmt="map"]{display:none}
 }
 
 .listband{padding:24px 0 8px}
@@ -2188,6 +2197,7 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .pagehead p{font-size:17px}
   .seg button{padding:6px 10px}
   .chip{padding:5px 9px 5px 8px;gap:5px}
+  .card-top{flex-wrap:wrap;gap:4px 12px}.card h3{flex-basis:100%}
   .seg,.chips{gap:5px}
   .frow + .frow{margin-top:10px;padding-top:10px}
   .wrap{padding:0 14px}
@@ -2197,7 +2207,6 @@ footer.foot{background:var(--sand);border-top:1px solid var(--line-soft);padding
   .mobsel{display:block;width:100%;max-width:360px;padding:10px 12px;
     font-family:var(--label);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--charcoal);background:var(--cream);border:1px solid var(--line);border-radius:3px}
-  button[data-fmt="map"]{display:none}
 }
 
 .calband{padding:24px 0 8px}
