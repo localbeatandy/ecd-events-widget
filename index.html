@@ -1252,6 +1252,7 @@ function drawPins(list){
   });
   if(markers.length){
     map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
+    map.setZoom(Math.min(map.getZoom()+1,13),{animate:false});
   }
 }
 function focus(i,fromMap){
