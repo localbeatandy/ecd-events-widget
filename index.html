@@ -1177,7 +1177,7 @@ function locNote(msg){let n=document.getElementById('locnote');
   if(!n){n=document.createElement('div');n.id='locnote';n.className='leaflet-control';const cr=map._controlCorners.bottomright;cr.insertBefore(n,cr.firstChild);}
   n.innerHTML=msg+'<button aria-label="Dismiss" onclick="this.parentNode.remove()">&times;</button>';}
 function addLocate(){
-  const C=L.Control.extend({options:{position:'bottomright'},onAdd:function(){
+  const C=L.Control.extend({options:{position:'topleft'},onAdd:function(){
     const b=L.DomUtil.create('button','locbtn'); b.type='button'; b.title='Show my location';
     b.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="7.5"/></svg><span>My location</span>';
     L.DomEvent.disableClickPropagation(b); b.onclick=locateMe; return b;}});
@@ -1214,7 +1214,8 @@ function locateMe(){
 
 try{
   if(typeof L!=='undefined'){
-    map=L.map('map',{scrollWheelZoom:true,zoomControl:true}).setView([39.63,-105.32],11);
+    map=L.map('map',{scrollWheelZoom:true,zoomControl:false}).setView([39.63,-105.32],11);
+    L.control.zoom({position:'topright'}).addTo(map);
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
       {attribution:'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxZoom:16}).addTo(map);
     /* town & road labels (Esri reference layer) — under the pins */
