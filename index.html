@@ -1420,6 +1420,24 @@ function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
 if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();</script>
 <style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
+<script>(function(){
+/* Wheel routing (Oct 19): when embedded on the ECD site, every wheel turn inside the calendar is sent to the
+   host page script, which decides: scroll the page (banner) or scroll the listings (sent back as ecdScrollBy). */
+function sc(){return document.querySelector('.results')||document.querySelector('body>.wrap');}
+function active(){try{return !window.frameElement||window.frameElement.classList.contains('on');}catch(e){return true;}}
+function host(){try{return !!parent.__ecdHost;}catch(e){return false;}}
+var last='';
+function report(force){if(!active()||!host())return;var s=sc();if(!s)return;var st=s.scrollTop,m=s.scrollHeight-s.clientHeight;
+  var a=st<=1,b=st>=m-1,k=a+','+b;if(force||k!==last){last=k;try{top.postMessage({ecdState:{atTop:a,atBottom:b}},'*');}catch(e){}}}
+window.__ecdScrollBy=function(dy){var s=sc();if(s)s.scrollTop+=dy;report(true);};
+setInterval(report,400);document.addEventListener('scroll',function(){report();},true);
+document.addEventListener('wheel',function(e){
+  if(!host()||!document.documentElement.classList.contains('fit')||e.defaultPrevented||e.ctrlKey)return;
+  if(e.target&&e.target.closest&&e.target.closest('.drawer,.scrim,select,#daypanel,.leaflet-popup'))return;
+  var dy=e.deltaY*(e.deltaMode===1?16:(e.deltaMode===2?innerHeight:1));if(!dy)return;
+  e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
+},{passive:false});
+})();</script>
 </template>
 <template id="evtpl-list">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2056,6 +2074,24 @@ function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
 if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();</script>
 <style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
+<script>(function(){
+/* Wheel routing (Oct 19): when embedded on the ECD site, every wheel turn inside the calendar is sent to the
+   host page script, which decides: scroll the page (banner) or scroll the listings (sent back as ecdScrollBy). */
+function sc(){return document.querySelector('.results')||document.querySelector('body>.wrap');}
+function active(){try{return !window.frameElement||window.frameElement.classList.contains('on');}catch(e){return true;}}
+function host(){try{return !!parent.__ecdHost;}catch(e){return false;}}
+var last='';
+function report(force){if(!active()||!host())return;var s=sc();if(!s)return;var st=s.scrollTop,m=s.scrollHeight-s.clientHeight;
+  var a=st<=1,b=st>=m-1,k=a+','+b;if(force||k!==last){last=k;try{top.postMessage({ecdState:{atTop:a,atBottom:b}},'*');}catch(e){}}}
+window.__ecdScrollBy=function(dy){var s=sc();if(s)s.scrollTop+=dy;report(true);};
+setInterval(report,400);document.addEventListener('scroll',function(){report();},true);
+document.addEventListener('wheel',function(e){
+  if(!host()||!document.documentElement.classList.contains('fit')||e.defaultPrevented||e.ctrlKey)return;
+  if(e.target&&e.target.closest&&e.target.closest('.drawer,.scrim,select,#daypanel,.leaflet-popup'))return;
+  var dy=e.deltaY*(e.deltaMode===1?16:(e.deltaMode===2?innerHeight:1));if(!dy)return;
+  e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
+},{passive:false});
+})();</script>
 </template>
 <template id="evtpl-cal">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2733,6 +2769,24 @@ function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
 if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
 })();</script>
 <style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
+<script>(function(){
+/* Wheel routing (Oct 19): when embedded on the ECD site, every wheel turn inside the calendar is sent to the
+   host page script, which decides: scroll the page (banner) or scroll the listings (sent back as ecdScrollBy). */
+function sc(){return document.querySelector('.results')||document.querySelector('body>.wrap');}
+function active(){try{return !window.frameElement||window.frameElement.classList.contains('on');}catch(e){return true;}}
+function host(){try{return !!parent.__ecdHost;}catch(e){return false;}}
+var last='';
+function report(force){if(!active()||!host())return;var s=sc();if(!s)return;var st=s.scrollTop,m=s.scrollHeight-s.clientHeight;
+  var a=st<=1,b=st>=m-1,k=a+','+b;if(force||k!==last){last=k;try{top.postMessage({ecdState:{atTop:a,atBottom:b}},'*');}catch(e){}}}
+window.__ecdScrollBy=function(dy){var s=sc();if(s)s.scrollTop+=dy;report(true);};
+setInterval(report,400);document.addEventListener('scroll',function(){report();},true);
+document.addEventListener('wheel',function(e){
+  if(!host()||!document.documentElement.classList.contains('fit')||e.defaultPrevented||e.ctrlKey)return;
+  if(e.target&&e.target.closest&&e.target.closest('.drawer,.scrim,select,#daypanel,.leaflet-popup'))return;
+  var dy=e.deltaY*(e.deltaMode===1?16:(e.deltaMode===2?innerHeight:1));if(!dy)return;
+  e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
+},{passive:false});
+})();</script>
 </template>
 <script>
 (function(){
@@ -2762,6 +2816,13 @@ if(document.body)start();else document.addEventListener('DOMContentLoaded',start
   }
   window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ show(window.innerWidth<=760?'list':'map'); }, 50); });
 })();
+</script>
+<script>
+/* Host handshake + listings scrolling requested by the ECD site's embed script (Oct 19). */
+window.addEventListener('message',function(e){var d=e.data||{};
+  if(d.ecdHost){window.__ecdHost=true;}
+  if(typeof d.ecdScrollBy==='number'){var f=document.querySelector('.evframe.on');try{f.contentWindow.__ecdScrollBy(d.ecdScrollBy);}catch(x){}}
+});
 </script>
 </body>
 </html>
