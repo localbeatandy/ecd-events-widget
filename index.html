@@ -1406,6 +1406,19 @@ function render(){
 buildFilterBar(document.getElementById('filters'));
 render();
 </script>
+<script>(function(){
+/* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
+   mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
+var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
+function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+setInterval(wz,1000);
+window.__ecdSetLocked=setLocked;
+if(window.parent===window||!('IntersectionObserver' in window)){return;}
+function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
+  new IntersectionObserver(function(es){var r=es[0].intersectionRatio;setLocked(r>=0.985);},{threshold:t}).observe(document.body);}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();</script>
+<style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
 </template>
 <template id="evtpl-list">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2028,6 +2041,19 @@ render();
 document.getElementById('filters').addEventListener('input',()=>{PAGE=0;},true);
 document.getElementById('filters').addEventListener('click',()=>{PAGE=0;},true);
 </script>
+<script>(function(){
+/* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
+   mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
+var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
+function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+setInterval(wz,1000);
+window.__ecdSetLocked=setLocked;
+if(window.parent===window||!('IntersectionObserver' in window)){return;}
+function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
+  new IntersectionObserver(function(es){var r=es[0].intersectionRatio;setLocked(r>=0.985);},{threshold:t}).observe(document.body);}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();</script>
+<style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
 </template>
 <template id="evtpl-cal">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2691,6 +2717,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
 buildFilterBar(document.getElementById('filters'));
 render();
 </script>
+<script>(function(){
+/* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
+   mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
+var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
+function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+setInterval(wz,1000);
+window.__ecdSetLocked=setLocked;
+if(window.parent===window||!('IntersectionObserver' in window)){return;}
+function start(){var t=[];for(var i=0;i<=100;i++)t.push(i/100);
+  new IntersectionObserver(function(es){var r=es[0].intersectionRatio;setLocked(r>=0.985);},{threshold:t}).observe(document.body);}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();</script>
+<style>html.fit.unlocked .results,html.fit.unlocked body>.wrap{overflow-y:hidden}</style>
 </template>
 <script>
 (function(){
