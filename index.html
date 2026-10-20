@@ -1438,6 +1438,82 @@ document.addEventListener('wheel',function(e){
   e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
 },{passive:false});
 })();</script>
+<style>
+.rpline{margin:2px 0 10px;font-size:13px;color:var(--ink-mute)}
+.rpline a{color:var(--green);font-weight:700;text-decoration:underline;cursor:pointer}
+.rp-b{margin:18px 0 4px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.rp-ctx{background:var(--sand);border-radius:5px;padding:9px 12px;font-size:13px;margin:4px 0 14px;line-height:1.45}
+.rp-lbl{display:block;font-family:var(--label);font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin:12px 0 6px}
+.rp-types{display:flex;flex-wrap:wrap;gap:6px}
+.rp-types button{border:1px solid var(--line);background:#fff;border-radius:3px;padding:6px 10px;cursor:pointer;
+  font-family:var(--label);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal)}
+.rp-types button.on{background:var(--green);border-color:var(--green);color:var(--cream)}
+.rp-in{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:4px;padding:9px 11px;font:14px var(--body);background:#fff;color:var(--charcoal)}
+textarea.rp-in{min-height:110px;resize:vertical}
+.rp-note{font-size:12px;color:var(--ink-mute);margin-top:5px}
+.rp-send{margin-top:16px;background:var(--gold,#B8955A);color:#fff;border:0;border-radius:3px;padding:11px 20px;cursor:pointer;
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.rp-send[disabled]{opacity:.55;cursor:default}
+.rp-msg{margin-top:12px;font-size:14px}
+.rp-hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+.drawer{z-index:1200}.scrim{z-index:1100}   /* keep the detail panel above Leaflet's map controls */
+</style>
+<script>(function(){
+/* "Tell LocalBeat" error / omission / comment reporting (Oct 20). Rows go to the ECD calendar reports
+   Google Sheet via an Apps Script web app, which also emails comments@localbeat.com. */
+var REPORT_URL='https://script.google.com/macros/s/AKfycbymCvYnalFdQQGG6uuMsZSHjzink5IJ2gcwNd4QeeKjKYBgki6CHCYkcmptgNM1tJdS/exec';
+var TYPES=['Wrong details','Duplicate','Cancelled','Doesn’t belong','Missing event','Comment'];
+function q(s){return document.querySelector(s);}
+function escH(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function view(){try{return (window.frameElement&&window.frameElement.id||'').replace('evfr-','')||'?';}catch(e){return '?';}}
+function hostPage(){try{return parent.document.referrer||parent.location.href;}catch(e){return document.referrer||'';}}
+function place(){var dr=q('#drawer'),sc=q('#scrim');
+  try{var r=window.frameElement?window.frameElement.getBoundingClientRect():null;var vh=(window.parent&&window.parent.innerHeight)||window.innerHeight;
+    if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
+      sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
+  dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
+function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+window.openReport=function(e){
+  var dr=q('#drawer');if(!dr)return;
+  var t=e?'Wrong details':'Comment';
+  dr.innerHTML='<div class="dr-hero"><button class="dr-close" id="drx" aria-label="Close">&times;</button>'
+    +'<span class="tagw">Tell LocalBeat</span><h2>'+(e?'Something wrong with this listing?':'Errors, omissions, comments?')+'</h2></div>'
+    +'<div class="dr-body"><p style="margin:2px 0 10px;font-size:14px;color:var(--ink-mute)">Help keep the Evergreen calendar accurate. LocalBeat reviews every note.</p>'
+    +(e?'<div class="rp-ctx"><b>About:</b> '+escH(e.name)+' · '+escH(when(e))+' · '+escH(e.venue||'')+'</div>':'')
+    +'<span class="rp-lbl">What’s this about?</span><div class="rp-types">'
+    +TYPES.map(function(x){return '<button type="button" data-t="'+escH(x)+'"'+(x===t?' class="on"':'')+'>'+escH(x)+'</button>';}).join('')+'</div>'
+    +'<span class="rp-lbl">Details</span><textarea class="rp-in" id="rp-d" maxlength="3000" placeholder="'+(e?'e.g. It starts at 8 PM, not 2 PM. A link helps if you have one.':'e.g. You’re missing the Saturday market at… (a link helps)')+'"></textarea>'
+    +'<span class="rp-lbl">Your email (optional)</span><input class="rp-in" id="rp-e" type="email" maxlength="200" placeholder="So we can follow up">'
+    +'<div class="rp-note">Not shown publicly. Used only to reply about this report.</div>'
+    +'<div class="rp-hp" aria-hidden="true"><input id="rp-w" tabindex="-1" autocomplete="off"></div>'
+    +'<button class="rp-send" id="rp-s" type="button">Send</button><div class="rp-msg" id="rp-m"></div></div>';
+  place();
+  q('#drx').onclick=closeDrawer;
+  dr.querySelectorAll('.rp-types button').forEach(function(b){b.onclick=function(){dr.querySelectorAll('.rp-types button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');t=b.dataset.t;};});
+  q('#rp-s').onclick=function(){
+    var d=q('#rp-d').value.trim(), m=q('#rp-m'), btn=q('#rp-s');
+    if(d.length<3){m.style.color='#B04A5A';m.textContent='Please add a few words of detail.';return;}
+    var f={type:t,details:d,email:q('#rp-e').value.trim(),website:q('#rp-w').value,
+      eventId:e?e.id:'',eventName:e?e.name:'',eventWhen:e?when(e):'',venue:e?(e.venue||''):'',eventUrl:e?(e.url||''):'',
+      view:view(),search:(window.S&&S.q)||'',dateRange:(window.S&&S.preset)||'',cats:(window.S&&S.cats)?[...S.cats].join(', '):'',
+      page:hostPage(),ua:navigator.userAgent.slice(0,180)};
+    try{f.search=S.q||'';f.dateRange=S.preset||'';f.cats=[...S.cats].join(', ');}catch(x){}
+    function done(){m.style.color='var(--green)';m.textContent='Thanks — sent to LocalBeat. We’ll take a look.';btn.disabled=true;setTimeout(closeDrawer,2600);}
+    function mail(){var body=Object.keys(f).filter(function(k){return f[k]&&k!=='website'&&k!=='ua';}).map(function(k){return k+': '+f[k];}).join('\n');
+      location.href='mailto:comments@localbeat.com?subject='+encodeURIComponent('ECD calendar report: '+t)+'&body='+encodeURIComponent(body);done();}
+    if(!REPORT_URL||REPORT_URL.indexOf('__')===0){mail();return;}
+    btn.disabled=true;m.style.color='var(--ink-mute)';m.textContent='Sending…';
+    fetch(REPORT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(f)}).then(done).catch(function(){btn.disabled=false;mail();});
+  };
+};
+function addA(){var c=q('#countline');if(!c||q('.rpline.rp-a'))return;var row=c.parentElement;
+  row.insertAdjacentHTML('afterend','<div class="rpline rp-a">Errors, omissions, comments? <a role="button" tabindex="0">Let us know</a></div>');
+  var a=q('.rp-a a');a.onclick=function(ev){ev.preventDefault();openReport(null);};a.onkeydown=function(ev){if(ev.key==='Enter')openReport(null);};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addA);else addA();
+if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od(e);try{var b=q('#drawer .dr-body');if(b&&e){
+  b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
+  var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
+})();</script>
 </template>
 <template id="evtpl-list">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2091,6 +2167,82 @@ document.addEventListener('wheel',function(e){
   var dy=e.deltaY*(e.deltaMode===1?16:(e.deltaMode===2?innerHeight:1));if(!dy)return;
   e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
 },{passive:false});
+})();</script>
+<style>
+.rpline{margin:2px 0 10px;font-size:13px;color:var(--ink-mute)}
+.rpline a{color:var(--green);font-weight:700;text-decoration:underline;cursor:pointer}
+.rp-b{margin:18px 0 4px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.rp-ctx{background:var(--sand);border-radius:5px;padding:9px 12px;font-size:13px;margin:4px 0 14px;line-height:1.45}
+.rp-lbl{display:block;font-family:var(--label);font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin:12px 0 6px}
+.rp-types{display:flex;flex-wrap:wrap;gap:6px}
+.rp-types button{border:1px solid var(--line);background:#fff;border-radius:3px;padding:6px 10px;cursor:pointer;
+  font-family:var(--label);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal)}
+.rp-types button.on{background:var(--green);border-color:var(--green);color:var(--cream)}
+.rp-in{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:4px;padding:9px 11px;font:14px var(--body);background:#fff;color:var(--charcoal)}
+textarea.rp-in{min-height:110px;resize:vertical}
+.rp-note{font-size:12px;color:var(--ink-mute);margin-top:5px}
+.rp-send{margin-top:16px;background:var(--gold,#B8955A);color:#fff;border:0;border-radius:3px;padding:11px 20px;cursor:pointer;
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.rp-send[disabled]{opacity:.55;cursor:default}
+.rp-msg{margin-top:12px;font-size:14px}
+.rp-hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+.drawer{z-index:1200}.scrim{z-index:1100}   /* keep the detail panel above Leaflet's map controls */
+</style>
+<script>(function(){
+/* "Tell LocalBeat" error / omission / comment reporting (Oct 20). Rows go to the ECD calendar reports
+   Google Sheet via an Apps Script web app, which also emails comments@localbeat.com. */
+var REPORT_URL='https://script.google.com/macros/s/AKfycbymCvYnalFdQQGG6uuMsZSHjzink5IJ2gcwNd4QeeKjKYBgki6CHCYkcmptgNM1tJdS/exec';
+var TYPES=['Wrong details','Duplicate','Cancelled','Doesn’t belong','Missing event','Comment'];
+function q(s){return document.querySelector(s);}
+function escH(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function view(){try{return (window.frameElement&&window.frameElement.id||'').replace('evfr-','')||'?';}catch(e){return '?';}}
+function hostPage(){try{return parent.document.referrer||parent.location.href;}catch(e){return document.referrer||'';}}
+function place(){var dr=q('#drawer'),sc=q('#scrim');
+  try{var r=window.frameElement?window.frameElement.getBoundingClientRect():null;var vh=(window.parent&&window.parent.innerHeight)||window.innerHeight;
+    if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
+      sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
+  dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
+function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+window.openReport=function(e){
+  var dr=q('#drawer');if(!dr)return;
+  var t=e?'Wrong details':'Comment';
+  dr.innerHTML='<div class="dr-hero"><button class="dr-close" id="drx" aria-label="Close">&times;</button>'
+    +'<span class="tagw">Tell LocalBeat</span><h2>'+(e?'Something wrong with this listing?':'Errors, omissions, comments?')+'</h2></div>'
+    +'<div class="dr-body"><p style="margin:2px 0 10px;font-size:14px;color:var(--ink-mute)">Help keep the Evergreen calendar accurate. LocalBeat reviews every note.</p>'
+    +(e?'<div class="rp-ctx"><b>About:</b> '+escH(e.name)+' · '+escH(when(e))+' · '+escH(e.venue||'')+'</div>':'')
+    +'<span class="rp-lbl">What’s this about?</span><div class="rp-types">'
+    +TYPES.map(function(x){return '<button type="button" data-t="'+escH(x)+'"'+(x===t?' class="on"':'')+'>'+escH(x)+'</button>';}).join('')+'</div>'
+    +'<span class="rp-lbl">Details</span><textarea class="rp-in" id="rp-d" maxlength="3000" placeholder="'+(e?'e.g. It starts at 8 PM, not 2 PM. A link helps if you have one.':'e.g. You’re missing the Saturday market at… (a link helps)')+'"></textarea>'
+    +'<span class="rp-lbl">Your email (optional)</span><input class="rp-in" id="rp-e" type="email" maxlength="200" placeholder="So we can follow up">'
+    +'<div class="rp-note">Not shown publicly. Used only to reply about this report.</div>'
+    +'<div class="rp-hp" aria-hidden="true"><input id="rp-w" tabindex="-1" autocomplete="off"></div>'
+    +'<button class="rp-send" id="rp-s" type="button">Send</button><div class="rp-msg" id="rp-m"></div></div>';
+  place();
+  q('#drx').onclick=closeDrawer;
+  dr.querySelectorAll('.rp-types button').forEach(function(b){b.onclick=function(){dr.querySelectorAll('.rp-types button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');t=b.dataset.t;};});
+  q('#rp-s').onclick=function(){
+    var d=q('#rp-d').value.trim(), m=q('#rp-m'), btn=q('#rp-s');
+    if(d.length<3){m.style.color='#B04A5A';m.textContent='Please add a few words of detail.';return;}
+    var f={type:t,details:d,email:q('#rp-e').value.trim(),website:q('#rp-w').value,
+      eventId:e?e.id:'',eventName:e?e.name:'',eventWhen:e?when(e):'',venue:e?(e.venue||''):'',eventUrl:e?(e.url||''):'',
+      view:view(),search:(window.S&&S.q)||'',dateRange:(window.S&&S.preset)||'',cats:(window.S&&S.cats)?[...S.cats].join(', '):'',
+      page:hostPage(),ua:navigator.userAgent.slice(0,180)};
+    try{f.search=S.q||'';f.dateRange=S.preset||'';f.cats=[...S.cats].join(', ');}catch(x){}
+    function done(){m.style.color='var(--green)';m.textContent='Thanks — sent to LocalBeat. We’ll take a look.';btn.disabled=true;setTimeout(closeDrawer,2600);}
+    function mail(){var body=Object.keys(f).filter(function(k){return f[k]&&k!=='website'&&k!=='ua';}).map(function(k){return k+': '+f[k];}).join('\n');
+      location.href='mailto:comments@localbeat.com?subject='+encodeURIComponent('ECD calendar report: '+t)+'&body='+encodeURIComponent(body);done();}
+    if(!REPORT_URL||REPORT_URL.indexOf('__')===0){mail();return;}
+    btn.disabled=true;m.style.color='var(--ink-mute)';m.textContent='Sending…';
+    fetch(REPORT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(f)}).then(done).catch(function(){btn.disabled=false;mail();});
+  };
+};
+function addA(){var c=q('#countline');if(!c||q('.rpline.rp-a'))return;var row=c.parentElement;
+  row.insertAdjacentHTML('afterend','<div class="rpline rp-a">Errors, omissions, comments? <a role="button" tabindex="0">Let us know</a></div>');
+  var a=q('.rp-a a');a.onclick=function(ev){ev.preventDefault();openReport(null);};a.onkeydown=function(ev){if(ev.key==='Enter')openReport(null);};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addA);else addA();
+if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od(e);try{var b=q('#drawer .dr-body');if(b&&e){
+  b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
+  var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
 })();</script>
 </template>
 <template id="evtpl-cal">
@@ -2786,6 +2938,82 @@ document.addEventListener('wheel',function(e){
   var dy=e.deltaY*(e.deltaMode===1?16:(e.deltaMode===2?innerHeight:1));if(!dy)return;
   e.preventDefault();report(true);try{top.postMessage({ecdWheel:dy},'*');}catch(x){}
 },{passive:false});
+})();</script>
+<style>
+.rpline{margin:2px 0 10px;font-size:13px;color:var(--ink-mute)}
+.rpline a{color:var(--green);font-weight:700;text-decoration:underline;cursor:pointer}
+.rp-b{margin:18px 0 4px;padding-top:12px;border-top:1px solid var(--line-soft)}
+.rp-ctx{background:var(--sand);border-radius:5px;padding:9px 12px;font-size:13px;margin:4px 0 14px;line-height:1.45}
+.rp-lbl{display:block;font-family:var(--label);font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin:12px 0 6px}
+.rp-types{display:flex;flex-wrap:wrap;gap:6px}
+.rp-types button{border:1px solid var(--line);background:#fff;border-radius:3px;padding:6px 10px;cursor:pointer;
+  font-family:var(--label);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal)}
+.rp-types button.on{background:var(--green);border-color:var(--green);color:var(--cream)}
+.rp-in{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:4px;padding:9px 11px;font:14px var(--body);background:#fff;color:var(--charcoal)}
+textarea.rp-in{min-height:110px;resize:vertical}
+.rp-note{font-size:12px;color:var(--ink-mute);margin-top:5px}
+.rp-send{margin-top:16px;background:var(--gold,#B8955A);color:#fff;border:0;border-radius:3px;padding:11px 20px;cursor:pointer;
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.rp-send[disabled]{opacity:.55;cursor:default}
+.rp-msg{margin-top:12px;font-size:14px}
+.rp-hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+.drawer{z-index:1200}.scrim{z-index:1100}   /* keep the detail panel above Leaflet's map controls */
+</style>
+<script>(function(){
+/* "Tell LocalBeat" error / omission / comment reporting (Oct 20). Rows go to the ECD calendar reports
+   Google Sheet via an Apps Script web app, which also emails comments@localbeat.com. */
+var REPORT_URL='https://script.google.com/macros/s/AKfycbymCvYnalFdQQGG6uuMsZSHjzink5IJ2gcwNd4QeeKjKYBgki6CHCYkcmptgNM1tJdS/exec';
+var TYPES=['Wrong details','Duplicate','Cancelled','Doesn’t belong','Missing event','Comment'];
+function q(s){return document.querySelector(s);}
+function escH(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function view(){try{return (window.frameElement&&window.frameElement.id||'').replace('evfr-','')||'?';}catch(e){return '?';}}
+function hostPage(){try{return parent.document.referrer||parent.location.href;}catch(e){return document.referrer||'';}}
+function place(){var dr=q('#drawer'),sc=q('#scrim');
+  try{var r=window.frameElement?window.frameElement.getBoundingClientRect():null;var vh=(window.parent&&window.parent.innerHeight)||window.innerHeight;
+    if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
+      sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
+  dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
+function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+window.openReport=function(e){
+  var dr=q('#drawer');if(!dr)return;
+  var t=e?'Wrong details':'Comment';
+  dr.innerHTML='<div class="dr-hero"><button class="dr-close" id="drx" aria-label="Close">&times;</button>'
+    +'<span class="tagw">Tell LocalBeat</span><h2>'+(e?'Something wrong with this listing?':'Errors, omissions, comments?')+'</h2></div>'
+    +'<div class="dr-body"><p style="margin:2px 0 10px;font-size:14px;color:var(--ink-mute)">Help keep the Evergreen calendar accurate. LocalBeat reviews every note.</p>'
+    +(e?'<div class="rp-ctx"><b>About:</b> '+escH(e.name)+' · '+escH(when(e))+' · '+escH(e.venue||'')+'</div>':'')
+    +'<span class="rp-lbl">What’s this about?</span><div class="rp-types">'
+    +TYPES.map(function(x){return '<button type="button" data-t="'+escH(x)+'"'+(x===t?' class="on"':'')+'>'+escH(x)+'</button>';}).join('')+'</div>'
+    +'<span class="rp-lbl">Details</span><textarea class="rp-in" id="rp-d" maxlength="3000" placeholder="'+(e?'e.g. It starts at 8 PM, not 2 PM. A link helps if you have one.':'e.g. You’re missing the Saturday market at… (a link helps)')+'"></textarea>'
+    +'<span class="rp-lbl">Your email (optional)</span><input class="rp-in" id="rp-e" type="email" maxlength="200" placeholder="So we can follow up">'
+    +'<div class="rp-note">Not shown publicly. Used only to reply about this report.</div>'
+    +'<div class="rp-hp" aria-hidden="true"><input id="rp-w" tabindex="-1" autocomplete="off"></div>'
+    +'<button class="rp-send" id="rp-s" type="button">Send</button><div class="rp-msg" id="rp-m"></div></div>';
+  place();
+  q('#drx').onclick=closeDrawer;
+  dr.querySelectorAll('.rp-types button').forEach(function(b){b.onclick=function(){dr.querySelectorAll('.rp-types button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');t=b.dataset.t;};});
+  q('#rp-s').onclick=function(){
+    var d=q('#rp-d').value.trim(), m=q('#rp-m'), btn=q('#rp-s');
+    if(d.length<3){m.style.color='#B04A5A';m.textContent='Please add a few words of detail.';return;}
+    var f={type:t,details:d,email:q('#rp-e').value.trim(),website:q('#rp-w').value,
+      eventId:e?e.id:'',eventName:e?e.name:'',eventWhen:e?when(e):'',venue:e?(e.venue||''):'',eventUrl:e?(e.url||''):'',
+      view:view(),search:(window.S&&S.q)||'',dateRange:(window.S&&S.preset)||'',cats:(window.S&&S.cats)?[...S.cats].join(', '):'',
+      page:hostPage(),ua:navigator.userAgent.slice(0,180)};
+    try{f.search=S.q||'';f.dateRange=S.preset||'';f.cats=[...S.cats].join(', ');}catch(x){}
+    function done(){m.style.color='var(--green)';m.textContent='Thanks — sent to LocalBeat. We’ll take a look.';btn.disabled=true;setTimeout(closeDrawer,2600);}
+    function mail(){var body=Object.keys(f).filter(function(k){return f[k]&&k!=='website'&&k!=='ua';}).map(function(k){return k+': '+f[k];}).join('\n');
+      location.href='mailto:comments@localbeat.com?subject='+encodeURIComponent('ECD calendar report: '+t)+'&body='+encodeURIComponent(body);done();}
+    if(!REPORT_URL||REPORT_URL.indexOf('__')===0){mail();return;}
+    btn.disabled=true;m.style.color='var(--ink-mute)';m.textContent='Sending…';
+    fetch(REPORT_URL,{method:'POST',mode:'no-cors',body:new URLSearchParams(f)}).then(done).catch(function(){btn.disabled=false;mail();});
+  };
+};
+function addA(){var c=q('#countline');if(!c||q('.rpline.rp-a'))return;var row=c.parentElement;
+  row.insertAdjacentHTML('afterend','<div class="rpline rp-a">Errors, omissions, comments? <a role="button" tabindex="0">Let us know</a></div>');
+  var a=q('.rp-a a');a.onclick=function(ev){ev.preventDefault();openReport(null);};a.onkeydown=function(ev){if(ev.key==='Enter')openReport(null);};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addA);else addA();
+if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od(e);try{var b=q('#drawer .dr-body');if(b&&e){
+  b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
+  var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
 })();</script>
 </template>
 <script>
