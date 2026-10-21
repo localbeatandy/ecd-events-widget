@@ -4,6 +4,26 @@
 <!-- data refreshed: 2026-10-21 -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- GA4:start -->
+<script>
+(function(){
+  var ID='G-EW4WCQSTL8';
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=function(){dataLayer.push(arguments);};
+  var p=location.pathname, page=/pipeline/.test(p)?'pipeline':/tier3/.test(p)?'tier3':'index';
+  var host='direct';
+  try{ if(window.top!==window){ host=document.referrer?new URL(document.referrer).hostname:'embedded-unknown'; } }catch(e){ host='embedded-unknown'; }
+  window.__ecdGA={page:page,host:host};
+  if(!/^G-[A-Z0-9]{6,}$/.test(ID)||/^G-X+$/.test(ID)) return;  // no real ID yet: track nothing
+  var s=document.createElement('script'); s.async=true;
+  s.src='https://www.googletagmanager.com/gtag/js?id='+ID; document.head.appendChild(s);
+  gtag('js',new Date());
+  // SameSite=None lets the GA cookie work inside the iframe on Chrome; Safari/Firefox
+  // block third-party cookies, so there each visit counts as a new user (views/events still count).
+  gtag('config',ID,{cookie_flags:'SameSite=None;Secure',widget_page:page,embed_host:host});
+})();
+</script>
+<!-- GA4:end -->
 <title>Evergreen Creative District Events · v2</title>
 <!-- ECD Events Widget v2 · data refreshed 2026-10-08 · front-end from ecd-site-mockup_260902.html -->
 <style>
@@ -3066,5 +3086,84 @@ window.addEventListener('message',function(e){var d=e.data||{};
   if(typeof d.ecdScrollBy==='number'){var f=document.querySelector('.evframe.on');try{f.contentWindow.__ecdScrollBy(d.ecdScrollBy);}catch(x){}}
 });
 </script>
+<!-- GA4:start -->
+<script>
+(function(){
+  var C=window.__ecdGA||{page:'?',host:'?'};
+  function send(name,params){
+    try{ params=params||{}; params.widget_page=C.page; params.embed_host=C.host; gtag('event',name,params); }catch(e){}
+  }
+  window.__ecdTrack=send;
+  var lastView=null;
+  function view(k){ if(k&&k!==lastView){ lastView=k; send('view_switch',{view:k}); } }
+  window.addEventListener('message',function(e){ var d=e.data||{}; if(d.ecdTab) view(d.ecdTab); });
+
+  function cut(s,n){ s=String(s||''); return s.length>n?s.slice(0,n):s; }
+  function hook(fr){
+    var w, d;
+    try{ w=fr.contentWindow; d=fr.contentDocument; }catch(e){ return; }
+    if(!w||!d||w.__ecdGAHooked) return;
+    w.__ecdGAHooked=true;
+    view(fr.id.replace('evfr-',''));
+
+    // Detail panel opened. Wrap whatever openDrawer is current (the report patch also wraps it).
+    if(typeof w.openDrawer==='function'){
+      var od=w.openDrawer;
+      w.openDrawer=function(ev){
+        var r=od.apply(this,arguments);
+        try{ send('event_open',{event_name_text:cut(ev&&ev.name,100),event_category:ev&&ev.cat||'',venue:cut(ev&&ev.venue,100)}); }catch(x){}
+        return r;
+      };
+    }
+    if(typeof w.openReport==='function'){
+      var orp=w.openReport;
+      w.openReport=function(ev,mode){
+        try{ send('report_open',{report_mode:mode||(ev?'listing':'comment')}); }catch(x){}
+        return orp.apply(this,arguments);
+      };
+    }
+
+    d.addEventListener('click',function(e){
+      var t=e.target; if(!t||!t.closest) return;
+      var chip=t.closest('.chip[data-c]');
+      if(chip){ send('filter_category',{category:chip.getAttribute('data-c'),action:chip.classList.contains('on')?'off':'on'}); return; }
+      var pre=t.closest('[data-p]');
+      if(pre && pre.closest('#seg')){ send('filter_date',{date_range:pre.getAttribute('data-p')}); return; }
+      if(t.closest('#clear')){ send('clear_filters'); return; }
+      var a=t.closest('a'); if(!a) return;
+      var href=a.getAttribute('href')||'', ev=w._drE||{};
+      var type=null;
+      if(/downloadIcs/.test(a.getAttribute('onclick')||'')) type='ics';
+      else if(/calendar\.google\.com|google\.com\/calendar/.test(href)) type='gcal';
+      else if(/outlook\.(live|office)\.com/.test(href)) type='outlook';
+      else if(/google\.[a-z.]+\/maps|maps\.apple\.com|maps\.google/.test(href)) type='directions';
+      else if(a.target==='_blank' && /^https?:/.test(href) && t.closest('#drawer')) type='event_page';
+      if(type) send('event_link_click',{link_type:type,event_name_text:cut(ev.name,100),event_category:ev.cat||'',venue:cut(ev.venue,100),link_domain:(function(){try{return new URL(href).hostname;}catch(x){return '';}})()});
+    },true);
+
+    d.addEventListener('change',function(e){
+      var t=e.target; if(!t) return;
+      if(t.id==='chipsel') send('filter_category',{category:t.value||'all',action:'only'});
+      if(t.id==='segsel') send('filter_date',{date_range:t.value});
+    },true);
+
+    var timer=null, lastQ='';
+    d.addEventListener('input',function(e){
+      var t=e.target; if(!t||t.id!=='q') return;
+      clearTimeout(timer);
+      timer=setTimeout(function(){ var q=(t.value||'').trim().toLowerCase();
+        if(q.length>=3 && q!==lastQ){ lastQ=q; send('search',{search_term:cut(q,100)}); } },1500);
+    },true);
+  }
+  function arm(){
+    document.querySelectorAll('.evframe').forEach(function(fr){
+      fr.addEventListener('load',function(){ setTimeout(function(){ hook(fr); },0); });
+      try{ if(fr.contentDocument&&fr.contentDocument.readyState==='complete'&&fr.srcdoc) hook(fr); }catch(e){}
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',arm); else arm();
+})();
+</script>
+<!-- GA4:end -->
 </body>
 </html>
