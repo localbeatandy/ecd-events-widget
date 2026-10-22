@@ -40,6 +40,7 @@
 <style>#dayrail{display:none !important}</style>
 </head>
 <body>
+<div id="ecd-loading" style="position:fixed;left:0;right:0;top:38%;text-align:center;font:600 13px/1.6 Montserrat,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#4A542F;pointer-events:none;z-index:5">Loading events…<br><span style="font-weight:400;letter-spacing:.04em;text-transform:none;color:#6E6A63">There are a lot of them — just a moment</span></div>
 <div class="ev-panels">
   <iframe id="evfr-map" class="evframe on" title="Events map view" allow="geolocation"></iframe>
   <iframe id="evfr-list" class="evframe" title="Events list view" allow="geolocation"></iframe>
@@ -1433,7 +1434,8 @@ render();
 /* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
    mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
 var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
-function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+function setLocked(on){LK=on;var h=false;try{h=!!parent.__ecdHost;}catch(e){}document.documentElement.classList.toggle('unlocked',!on&&!h);wz();}
+setInterval(function(){setLocked(LK);},700);
 setInterval(wz,1000);
 window.__ecdSetLocked=setLocked;
 if(window.parent===window||!('IntersectionObserver' in window)){return;}
@@ -2184,7 +2186,8 @@ document.getElementById('filters').addEventListener('click',()=>{PAGE=0;},true);
 /* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
    mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
 var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
-function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+function setLocked(on){LK=on;var h=false;try{h=!!parent.__ecdHost;}catch(e){}document.documentElement.classList.toggle('unlocked',!on&&!h);wz();}
+setInterval(function(){setLocked(LK);},700);
 setInterval(wz,1000);
 window.__ecdSetLocked=setLocked;
 if(window.parent===window||!('IntersectionObserver' in window)){return;}
@@ -2976,7 +2979,8 @@ render();
 /* Scroll hand-off (Oct 19): until the widget is fully on screen, its own scroll areas are frozen so the
    mouse wheel scrolls the host page (banner/photo scroll away). Once fully visible, listings scroll. */
 var LK=true;function wz(){try{if(typeof map!=='undefined'&&map&&map.scrollWheelZoom){LK?map.scrollWheelZoom.enable():map.scrollWheelZoom.disable();}}catch(e){}}
-function setLocked(on){LK=on;document.documentElement.classList.toggle('unlocked',!on);wz();}
+function setLocked(on){LK=on;var h=false;try{h=!!parent.__ecdHost;}catch(e){}document.documentElement.classList.toggle('unlocked',!on&&!h);wz();}
+setInterval(function(){setLocked(LK);},700);
 setInterval(wz,1000);
 window.__ecdSetLocked=setLocked;
 if(window.parent===window||!('IntersectionObserver' in window)){return;}
@@ -3110,6 +3114,7 @@ try{ if(typeof render==='function') render(); }catch(x){}
     document.querySelectorAll('.evframe').forEach(function(f){ f.classList.toggle('on', f.id==='evfr-'+k); });
     if(!loaded[k]){
       var fr = document.getElementById('evfr-'+k);
+      fr.addEventListener('load',function(){var l=document.getElementById('ecd-loading');if(l)l.remove();},{once:true});
       fr.srcdoc = document.getElementById('evtpl-'+k).innerHTML;
       loaded[k] = true;
       autoSize(fr);
