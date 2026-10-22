@@ -37,6 +37,7 @@
   html.fit .ev-panels { flex: 1 1 auto; min-height: 0; width: 100%; }   /* fills what's left under any page banner (e.g. tier3) */
   html.fit .evframe.on { height: 100% !important; }
 </style>
+<style>#dayrail{display:none !important}</style>
 </head>
 <body>
 <div class="ev-panels">
@@ -1539,6 +1540,23 @@ if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od
   b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
   var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
 })();</script>
+<style>
+/* Oct 22: every listing shows its own date + time, so the day headers and the floating date are gone */
+.dayhead, .daygroup, .dlab{display:none !important}
+#powby{display:flex !important}
+</style>
+<script>(function(){
+function tp(d){var h=d.getHours(),m=d.getMinutes();return {n:(h%12||12)+(m?':'+String(m).padStart(2,'0'):''),ap:h>=12?'PM':'AM'};}
+function range(e){
+  if(e.allDay) return 'All day';
+  var s=e._d, a=tp(s), en=e.end?new Date(e.end):null;
+  if(!en||isNaN(en)||en<=s||(en-s)>16*3600000||en.getDate()!==s.getDate()) return a.n+' '+a.ap;
+  var b=tp(en);
+  return a.ap===b.ap ? a.n+'–'+b.n+' '+b.ap : a.n+' '+a.ap+'–'+b.n+' '+b.ap;
+}
+try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
+try{ if(typeof render==='function') render(); }catch(x){}
+})();</script>
 </template>
 <template id="evtpl-list">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2040,7 +2058,7 @@ function render(){
           +'<span class="tag">'+icon(e.cat,13)+esc(e.cat)+'</span>'+(e.cats||[]).slice(1).map(function(c){return '<span class="tag tag2">'+icon(c,13)+esc(c)+'</span>';}).join('')
           +'<svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>'
         +'</span>'
-        +'<span class="meta"><span class="when">'+fmtTime(e)+'</span><span class="sep">\u00b7</span>'
+        +'<span class="meta"><span class="when">'+fmtWhen(e)+'</span><span class="sep">\u00b7</span>'
           +'<span>'+esc(e.venue||'Venue to be confirmed')+'</span><span class="sep">\u00b7</span>'
           +'<span>'+esc(e.city||'')+'</span></span>'
         +(e.desc?'<span class="desc">'+esc(e.desc)+'</span>':'')
@@ -2272,6 +2290,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od(e);try{var b=q('#drawer .dr-body');if(b&&e){
   b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
   var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
+})();</script>
+<style>
+/* Oct 22: every listing shows its own date + time, so the day headers and the floating date are gone */
+.dayhead, .daygroup, .dlab{display:none !important}
+#powby{display:flex !important}
+</style>
+<script>(function(){
+function tp(d){var h=d.getHours(),m=d.getMinutes();return {n:(h%12||12)+(m?':'+String(m).padStart(2,'0'):''),ap:h>=12?'PM':'AM'};}
+function range(e){
+  if(e.allDay) return 'All day';
+  var s=e._d, a=tp(s), en=e.end?new Date(e.end):null;
+  if(!en||isNaN(en)||en<=s||(en-s)>16*3600000||en.getDate()!==s.getDate()) return a.n+' '+a.ap;
+  var b=tp(en);
+  return a.ap===b.ap ? a.n+'–'+b.n+' '+b.ap : a.n+' '+a.ap+'–'+b.n+' '+b.ap;
+}
+try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
+try{ if(typeof render==='function') render(); }catch(x){}
 })();</script>
 </template>
 <template id="evtpl-cal">
@@ -3047,6 +3082,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 if(typeof openDrawer==='function'){var _od=openDrawer;openDrawer=function(e){_od(e);try{var b=q('#drawer .dr-body');if(b&&e){
   b.insertAdjacentHTML('beforeend','<div class="rpline rp-b">Something wrong with this listing? <a role="button" tabindex="0">Report it</a></div>');
   var a=b.querySelector('.rp-b a');a.onclick=function(ev){ev.preventDefault();openReport(e);};}}catch(x){}};}
+})();</script>
+<style>
+/* Oct 22: every listing shows its own date + time, so the day headers and the floating date are gone */
+.dayhead, .daygroup, .dlab{display:none !important}
+#powby{display:flex !important}
+</style>
+<script>(function(){
+function tp(d){var h=d.getHours(),m=d.getMinutes();return {n:(h%12||12)+(m?':'+String(m).padStart(2,'0'):''),ap:h>=12?'PM':'AM'};}
+function range(e){
+  if(e.allDay) return 'All day';
+  var s=e._d, a=tp(s), en=e.end?new Date(e.end):null;
+  if(!en||isNaN(en)||en<=s||(en-s)>16*3600000||en.getDate()!==s.getDate()) return a.n+' '+a.ap;
+  var b=tp(en);
+  return a.ap===b.ap ? a.n+'–'+b.n+' '+b.ap : a.n+' '+a.ap+'–'+b.n+' '+b.ap;
+}
+try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
+try{ if(typeof render==='function') render(); }catch(x){}
 })();</script>
 </template>
 <script>
