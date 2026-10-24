@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Kismet Jazz Jam
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2027-01-02-17-00-7312ce@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20270103T000000Z
+DTEND:20270103T030000Z
+SUMMARY:Kismet Jazz Jam
+DESCRIPTION:The Kismet open jam returns for Saturday dinner\, with two grou
+ ps trading sets.\n\nReserve a table: https://evergreenhummingbird.com/rese
+ rvations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Music & Events · Hummingbird Club</title>
+<meta name="description" content="Live music at the Hummingbird Club in Evergreen, Colorado: weekend brunch sets, weeknight dinner music and special events.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+:root {
+  --bg: #0d0d0d; --panel: #1a1a1a; --line: #2b2b2b; --line-2: #333; --line-3: #4d4d4d;
+  --ink: #fff; --ink-2: #d6d6d6; --ink-3: #bdbdbd;
+  --pink: #c228b2; --pink-hi: #e879d9; --pink-soft: #f4b3ec;
+  --brunch: #f5c46b; --dinner: #9cc2ff; --special: #e879d9;
+  --display: 'Lobster Two', 'Segoe UI', Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+a { color: var(--pink-hi); } a:hover { color: var(--pink-soft); }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--pink-hi); outline-offset: 2px; }
+.wrap { max-width: 1152px; margin: 0 auto; padding: 40px 24px 56px; }
+
+/* heading */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; }
+h1 { margin: 0; font: 700 clamp(38px, 7vw, 56px)/1.05 var(--display); }
+.sub { margin: 10px 0 0; color: var(--ink-3); }
+.views { display: flex; padding: 4px; background: var(--panel); border: 1px solid var(--line-2); border-radius: 12px; }
+.views button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 0;
+  border-radius: 9px; background: transparent; color: var(--ink-2); font-weight: 600; cursor: pointer; }
+.views button[aria-pressed="true"] { background: var(--line-3); color: var(--ink); }
+
+/* filters */
+.filters { margin-top: 32px; padding: 20px 24px; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 10px; display: grid; gap: 16px; }
+.frow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.flabel { width: 96px; color: var(--ink-3); font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.chip { min-height: 44px; padding: 0 16px; border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer;
+  background: transparent; color: var(--ink-2); border: 1px solid var(--line-3); }
+.chip[aria-pressed="true"] { background: var(--pink); color: #fff; border-color: var(--pink); }
+.from { display: flex; align-items: center; gap: 8px; margin-left: 4px; color: var(--ink-2); font-size: 14px; }
+.from input { min-height: 44px; padding: 0 12px; background: var(--bg); border: 1px solid var(--line-3);
+  border-radius: 10px; color-scheme: dark; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; }
+.count { color: var(--ink-3); font-size: 14px; margin: 0; }
+
+/* menus (add to calendar / subscribe) */
+details.menu { position: relative; }
+details.menu > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line-3); color: var(--ink);
+  font-size: 15px; font-weight: 600; white-space: nowrap; user-select: none; }
+details.menu > summary::-webkit-details-marker { display: none; }
+details.menu > summary:hover, details.menu[open] > summary { border-color: var(--pink-hi); }
+.menu-list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; min-width: 230px; padding: 6px;
+  background: #222; border: 1px solid var(--line-3); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.55); }
+.menu-list a, .menu-list button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 0 12px;
+  border: 0; border-radius: 7px; background: none; color: var(--ink); text-decoration: none; font-size: 15px; cursor: pointer; text-align: left; }
+.menu-list a:hover, .menu-list button:hover { background: #333; color: var(--ink); }
+.menu-note { padding: 8px 12px 6px; color: var(--ink-3); font-size: 13px; line-height: 1.4; }
+
+/* list */
+.month { margin-top: 32px; }
+.month h2 { margin: 0 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--line-2); font: 700 32px/1.2 var(--display); }
+.cards { display: flex; flex-direction: column; gap: 12px; }
+.card { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; padding: 20px 24px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 10px; }
+.card.today { border-color: var(--pink); }
+.datebox { flex: 0 0 76px; display: flex; flex-direction: column; align-items: center; padding: 10px 0; background: var(--bg);
+  border: 1px solid var(--line-2); border-radius: 10px; line-height: 1; }
+.datebox .m { color: var(--pink-hi); font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+.datebox .d { font: 700 34px/1 var(--display); margin: 4px 0 2px; }
+.datebox .w { color: var(--ink-3); font-size: 12px; font-weight: 600; }
+.body { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.titlerow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tonight { padding: 3px 9px; background: var(--pink); border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.card h3 { margin: 0; font: 700 25px/1.15 var(--display); }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 14px; color: var(--ink-2); }
+.meta > span { display: inline-flex; align-items: center; gap: 6px; }
+.tag { padding: 3px 10px; border: 1px solid currentColor; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.t-brunch { color: var(--brunch); } .t-dinner { color: var(--dinner); } .t-special { color: var(--special); }
+.weekly { color: var(--ink-3); }
+.desc { margin: 0; color: var(--ink-3); font-size: 15px; line-height: 1.5; }
+.actions { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; background: var(--pink); color: #fff;
+  border-radius: 10px; font-size: 15px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.btn:hover { background: #a3208f; color: #fff; }
+.empty { margin-top: 24px; padding: 48px 24px; text-align: center; background: var(--panel); border-radius: 10px; }
+.empty p:first-child { margin: 0; font: 28px/1.2 var(--display); }
+.empty p:last-child { margin: 8px 0 0; color: var(--ink-3); }
+
+/* calendar */
+.cal { margin-top: 28px; }
+.calhead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.calhead h2 { margin: 0; font: 700 32px/1.2 var(--display); }
+.navbtn { min-width: 44px; min-height: 44px; border: 1px solid var(--line-3); border-radius: 10px; background: none; cursor: pointer; font-size: 20px; }
+.navbtn:disabled { opacity: .3; cursor: default; }
+.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.dow { text-align: center; color: var(--ink-3); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding-bottom: 4px; }
+.day { min-height: 104px; padding: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: default; }
+.day.out { background: transparent; border-color: transparent; }
+.day.past { opacity: .4; }
+.day.has { cursor: pointer; }
+.day.has:hover, .day.sel { border-color: var(--pink-hi); }
+.day.today .num { background: var(--pink); color: #fff; }
+.num { align-self: flex-start; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; font-size: 13px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center; color: var(--ink-2); }
+.pill { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; line-height: 1.3;
+  padding: 2px 6px; border-radius: 5px; border-left: 3px solid currentColor; background: rgba(255,255,255,.04); }
+.pill span { color: var(--ink); }
+.dots { display: none; gap: 4px; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.dayevents { margin-top: 20px; }
+.closed { color: var(--ink-3); font-size: 14px; margin: 18px 0 0; }
+
+.foot { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap;
+  justify-content: space-between; gap: 10px; color: var(--ink-3); font-size: 13px; }
+.foot a { color: var(--ink-3); }
+
+@media (max-width: 640px) {
+  .wrap { padding: 28px 16px 40px; }
+  .filters { padding: 16px; }
+  .flabel { width: 100%; }
+  .card { padding: 16px; gap: 14px 16px; }
+  .datebox { flex-basis: 64px; }
+  .actions { width: 100%; }
+  .body { flex-basis: 200px; }
+  .actions > * { flex: 1 1 0; }
+  .actions .btn, .actions details.menu > summary { width: 100%; justify-content: center; padding: 0 10px; }
+  .menu-list { right: 0; left: auto; max-width: calc(100vw - 32px); }
+  .day { min-height: 54px; padding: 4px; align-items: center; }
+  .pill { display: none; }
+  .dots { display: flex; }
+  .num { font-size: 12px; }
+}
+@media (prefers-reduced-motion: no-preference) { .card, .day { transition: border-color .15s; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Live music &amp; events</h1>
+      <p class="sub">Brunch sets Sat–Sun 11–2 · Dinner music Tue–Sat 5–8 · Closed Mondays</p>
+    </div>
+    <div class="views" role="group" aria-label="View">
+      <button type="button" data-view="list" aria-pressed="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>List</button>
+      <button type="button" data-view="cal" aria-pressed="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Calendar</button>
+    </div>
+  </div>
+
+  <section class="filters" aria-label="Filters">
+    <div class="frow"><span class="flabel">Type</span><span id="typeChips" class="frow"></span></div>
+    <div class="frow" id="whenRow"><span class="flabel">When</span><span id="rangeChips" class="frow"></span>
+      <label class="from">From <input type="date" id="from"></label></div>
+  </section>
+
+  <div class="bar">
+    <p class="count" id="count" aria-live="polite"></p>
+    <details class="menu" id="subscribe">
+      <summary>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M12 13v5M9.5 15.5h5"/></svg>
+        Subscribe to our calendar</summary>
+      <div class="menu-list">
+        <p class="menu-note">Every show, added to your calendar and kept up to date automatically.</p>
+        <a id="subGoogle" target="_blank" rel="noopener">Google Calendar</a>
+        <a id="subApple">Apple Calendar / iPhone</a>
+        <a id="subOutlook" target="_blank" rel="noopener">Outlook</a>
+        <button type="button" id="subCopy">Copy calendar link</button>
+      </div>
+    </details>
+  </div>
+
+  <div id="listView"></div>
+  <div id="calView" hidden></div>
+
+  <div class="foot">
+    <span>Hummingbird Club · 1338 County Rd 65, Evergreen, CO</span>
+    <span>Event listings powered by <a href="https://localbeat.com" target="_blank" rel="noopener">LocalBeat</a></span>
+  </div>
+</div>
+
+<script>
+var DATA = {"events": [{"slug": "2026-10-24-11-00-f2a8b2", "title": "Kismet Jazz Jam", "desc": "An open jam where musicians build ensembles on the spot, with the doors opened by Jonny Sharpton & Craig Abbes. Backline and drums provided.", "type": "brunch", "start": "2026-10-24T11:00:00-06:00", "end": "2026-10-24T14:00:00-06:00", "date": "2026-10-24", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-10-24-17-00-b8bce5", "title": "Jean-Marie Jazz", "desc": "Jean-Marie and partner play a jazz duo set for Saturday dinner.", "type": "dinner", "start": "2026-10-24T17:00:00-06:00", "end": "2026-10-24T20:00:00-06:00", "date": "2026-10-24", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-10-27-17-00-2399d0", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-10-27T17:00:00-06:00", "end": "2026-10-27T20:00:00-06:00", "date": "2026-10-27", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-10-28-17-00-ac1b97", "title": "Jazz Guitar Night: Clint Dadian & Sean McGowen", "desc": "Clint Dadian's Wednesday guitar night, this week with Sean McGowen. Jazz guitar duos all through dinner.", "type": "dinner", "start": "2026-10-28T17:00:00-06:00", "end": "2026-10-28T20:00:00-06:00", "date": "2026-10-28", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-10-29-17-00-f46a0b", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-10-29T17:00:00-06:00", "end": "2026-10-29T20:00:00-06:00", "date": "2026-10-29", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-10-30-17-00-baf1f2", "title": "Nylon Sun", "desc": "Brad Turner's bossa nova sound, applied to classic covers.", "type": "dinner", "start": "2026-10-30T17:00:00-06:00", "end": "2026-10-30T20:00:00-06:00", "date": "2026-10-30", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-10-31-11-00-9eb051", "title": "Halloween Brunch: Chaz DePaolo Trio", "desc": "Part one of our Halloween double header: the Chaz DePaolo Trio plays brunch.", "type": "special", "start": "2026-10-31T11:00:00-06:00", "end": "2026-10-31T14:00:00-06:00", "date": "2026-10-31", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-10-31-17-00-81e280", "title": "Halloween Night Live", "desc": "Part two of the Halloween double header: a four-piece band for dinner, lineup to be announced.", "type": "special", "start": "2026-10-31T17:00:00-06:00", "end": "2026-10-31T20:00:00-06:00", "date": "2026-10-31", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-03-17-00-dd945a", "title": "Piano Night with Doug Krause", "desc": "Solo piano from Doug Krause to go with dinner, every Tuesday evening.", "type": "dinner", "start": "2026-11-03T17:00:00-07:00", "end": "2026-11-03T20:00:00-07:00", "date": "2026-11-03", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-11-04-17-00-137708", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-11-04T17:00:00-07:00", "end": "2026-11-04T20:00:00-07:00", "date": "2026-11-04", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-11-05-17-00-a6b5a0", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-11-05T17:00:00-07:00", "end": "2026-11-05T20:00:00-07:00", "date": "2026-11-05", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-11-06-17-00-3c86c9", "title": "Album Release Party: Dan Codiga", "desc": "Dan Codiga celebrates his new album with a dinner set at the Hummingbird.", "type": "special", "start": "2026-11-06T17:00:00-07:00", "end": "2026-11-06T20:00:00-07:00", "date": "2026-11-06", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-07-17-00-c8a827", "title": "Kismet Jazz Jam", "desc": "The Kismet open jam moves to Saturday dinner, hosted by Jonny Sharpton & Craig Abbes.", "type": "dinner", "start": "2026-11-07T17:00:00-07:00", "end": "2026-11-07T20:00:00-07:00", "date": "2026-11-07", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-10-17-00-780391", "title": "Piano Night with Doug Krause", "desc": "Solo piano from Doug Krause to go with dinner, every Tuesday evening.", "type": "dinner", "start": "2026-11-10T17:00:00-07:00", "end": "2026-11-10T20:00:00-07:00", "date": "2026-11-10", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-11-11-17-00-318f80", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-11-11T17:00:00-07:00", "end": "2026-11-11T20:00:00-07:00", "date": "2026-11-11", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-11-12-17-00-480529", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-11-12T17:00:00-07:00", "end": "2026-11-12T20:00:00-07:00", "date": "2026-11-12", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-11-13-17-00-f22d6f", "title": "Alexa Kilgore", "desc": "Alexa Kilgore plays a solo set for Friday dinner.", "type": "dinner", "start": "2026-11-13T17:00:00-07:00", "end": "2026-11-13T20:00:00-07:00", "date": "2026-11-13", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-14-17-00-aed3f0", "title": "Birthday Celebration for Chaz DePaolo", "desc": "Chaz DePaolo celebrates his birthday with a duo set at dinner. Come raise a glass.", "type": "special", "start": "2026-11-14T17:00:00-07:00", "end": "2026-11-14T20:00:00-07:00", "date": "2026-11-14", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-17-17-00-075381", "title": "Piano Night with Doug Krause", "desc": "Solo piano from Doug Krause to go with dinner, every Tuesday evening.", "type": "dinner", "start": "2026-11-17T17:00:00-07:00", "end": "2026-11-17T20:00:00-07:00", "date": "2026-11-17", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-11-18-17-00-8e0b89", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-11-18T17:00:00-07:00", "end": "2026-11-18T20:00:00-07:00", "date": "2026-11-18", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-11-19-17-00-e1f31d", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-11-19T17:00:00-07:00", "end": "2026-11-19T20:00:00-07:00", "date": "2026-11-19", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-11-20-17-00-e95750", "title": "Tony Fiore", "desc": "Tony Fiore plays a solo set for Friday dinner.", "type": "dinner", "start": "2026-11-20T17:00:00-07:00", "end": "2026-11-20T20:00:00-07:00", "date": "2026-11-20", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-21-17-00-b3eba2", "title": "Fernandi & Lopey", "desc": "Fernandi & Lopey play a duo set for Saturday dinner.", "type": "dinner", "start": "2026-11-21T17:00:00-07:00", "end": "2026-11-21T20:00:00-07:00", "date": "2026-11-21", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-11-24-17-00-631f6f", "title": "Piano Night with Doug Krause", "desc": "Solo piano from Doug Krause to go with dinner, every Tuesday evening.", "type": "dinner", "start": "2026-11-24T17:00:00-07:00", "end": "2026-11-24T20:00:00-07:00", "date": "2026-11-24", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-11-25-17-00-9a0539", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-11-25T17:00:00-07:00", "end": "2026-11-25T20:00:00-07:00", "date": "2026-11-25", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-11-28-17-00-3d2713", "title": "Bass & Guitar with Steve Posner", "desc": "Steve Posner on bass and guitar for Saturday dinner.", "type": "dinner", "start": "2026-11-28T17:00:00-07:00", "end": "2026-11-28T20:00:00-07:00", "date": "2026-11-28", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-01-17-00-6b99d8", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-12-01T17:00:00-07:00", "end": "2026-12-01T20:00:00-07:00", "date": "2026-12-01", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-12-02-17-00-f12874", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-12-02T17:00:00-07:00", "end": "2026-12-02T20:00:00-07:00", "date": "2026-12-02", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-12-03-17-00-7d907e", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-12-03T17:00:00-07:00", "end": "2026-12-03T20:00:00-07:00", "date": "2026-12-03", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-12-04-17-00-eventbrite-c5cd88", "title": "Shabbat & the First Night of Chanukah", "desc": "Gather for Shabbat dinner and music on the first night of Chanukah.", "type": "special", "start": "2026-12-04T17:00:00-07:00", "end": "2026-12-04T20:00:00-07:00", "date": "2026-12-04", "time": "5–8 PM", "weekly": "", "tickets": "https://www.eventbrite.com/e/2003432012079"}, {"slug": "2026-12-05-17-00-662f10", "title": "Kismet Jazz", "desc": "Kismet Jazz plays a trio set for Saturday dinner.", "type": "dinner", "start": "2026-12-05T17:00:00-07:00", "end": "2026-12-05T20:00:00-07:00", "date": "2026-12-05", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-06-11-00-97fa64", "title": "Brunch Music", "desc": "Live music with Sunday brunch. Lineup to be announced.", "type": "brunch", "start": "2026-12-06T11:00:00-07:00", "end": "2026-12-06T14:00:00-07:00", "date": "2026-12-06", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-08-17-00-f9cd97", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-12-08T17:00:00-07:00", "end": "2026-12-08T20:00:00-07:00", "date": "2026-12-08", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-12-09-17-00-fdf145", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-12-09T17:00:00-07:00", "end": "2026-12-09T20:00:00-07:00", "date": "2026-12-09", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-12-10-17-00-652746", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-12-10T17:00:00-07:00", "end": "2026-12-10T20:00:00-07:00", "date": "2026-12-10", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-12-11-17-00-eventbrite-9eb617", "title": "Last Night of Chanukah with Rabbi Jamie", "desc": "Rabbi Jamie sings and plays with Devora & Rabbi Carrie to celebrate the last night of Chanukah and a special Shabbat.", "type": "special", "start": "2026-12-11T17:00:00-07:00", "end": "2026-12-11T20:00:00-07:00", "date": "2026-12-11", "time": "5–8 PM", "weekly": "", "tickets": "https://www.eventbrite.com/e/2003430563747"}, {"slug": "2026-12-13-11-00-beb764", "title": "Brunch Music", "desc": "Live music with Sunday brunch. Lineup to be announced.", "type": "brunch", "start": "2026-12-13T11:00:00-07:00", "end": "2026-12-13T14:00:00-07:00", "date": "2026-12-13", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-15-17-00-89da8c", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-12-15T17:00:00-07:00", "end": "2026-12-15T20:00:00-07:00", "date": "2026-12-15", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-12-16-17-00-b72a5b", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-12-16T17:00:00-07:00", "end": "2026-12-16T20:00:00-07:00", "date": "2026-12-16", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-12-17-17-00-5f0901", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-12-17T17:00:00-07:00", "end": "2026-12-17T20:00:00-07:00", "date": "2026-12-17", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-12-18-17-00-eventbrite-3fd7cc", "title": "Shabbat Celebration", "desc": "A festive Shabbat dinner with music, with Tony Fiore playing.", "type": "special", "start": "2026-12-18T17:00:00-07:00", "end": "2026-12-18T20:00:00-07:00", "date": "2026-12-18", "time": "5–8 PM", "weekly": "", "tickets": "https://www.eventbrite.com/e/2003429820524"}, {"slug": "2026-12-20-11-00-2cb257", "title": "Brunch Music", "desc": "Live music with Sunday brunch. Lineup to be announced.", "type": "brunch", "start": "2026-12-20T11:00:00-07:00", "end": "2026-12-20T14:00:00-07:00", "date": "2026-12-20", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-22-17-00-9e3985", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-12-22T17:00:00-07:00", "end": "2026-12-22T20:00:00-07:00", "date": "2026-12-22", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-12-23-17-00-9e5714", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-12-23T17:00:00-07:00", "end": "2026-12-23T20:00:00-07:00", "date": "2026-12-23", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2026-12-24-17-00-2773ea", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2026-12-24T17:00:00-07:00", "end": "2026-12-24T20:00:00-07:00", "date": "2026-12-24", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2026-12-27-11-00-4746b0", "title": "Brunch Music", "desc": "Live music with Sunday brunch. Lineup to be announced.", "type": "brunch", "start": "2026-12-27T11:00:00-07:00", "end": "2026-12-27T14:00:00-07:00", "date": "2026-12-27", "time": "11 AM–2 PM", "weekly": "", "tickets": ""}, {"slug": "2026-12-29-17-00-ed832d", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2026-12-29T17:00:00-07:00", "end": "2026-12-29T20:00:00-07:00", "date": "2026-12-29", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2026-12-30-17-00-4e39fe", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2026-12-30T17:00:00-07:00", "end": "2026-12-30T20:00:00-07:00", "date": "2026-12-30", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2027-01-02-17-00-7312ce", "title": "Kismet Jazz Jam", "desc": "The Kismet open jam returns for Saturday dinner, with two groups trading sets.", "type": "dinner", "start": "2027-01-02T17:00:00-07:00", "end": "2027-01-02T20:00:00-07:00", "date": "2027-01-02", "time": "5–8 PM", "weekly": "", "tickets": ""}, {"slug": "2027-01-05-17-00-d786be", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2027-01-05T17:00:00-07:00", "end": "2027-01-05T20:00:00-07:00", "date": "2027-01-05", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2027-01-06-17-00-a889ea", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2027-01-06T17:00:00-07:00", "end": "2027-01-06T20:00:00-07:00", "date": "2027-01-06", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2027-01-07-17-00-c46656", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2027-01-07T17:00:00-07:00", "end": "2027-01-07T20:00:00-07:00", "date": "2027-01-07", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2027-01-12-17-00-5d40ac", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2027-01-12T17:00:00-07:00", "end": "2027-01-12T20:00:00-07:00", "date": "2027-01-12", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2027-01-13-17-00-2ec0c4", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2027-01-13T17:00:00-07:00", "end": "2027-01-13T20:00:00-07:00", "date": "2027-01-13", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2027-01-14-17-00-dc09a1", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2027-01-14T17:00:00-07:00", "end": "2027-01-14T20:00:00-07:00", "date": "2027-01-14", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}, {"slug": "2027-01-19-17-00-c19199", "title": "Piano Night", "desc": "Solo piano with dinner, a Tuesday-night tradition at the Hummingbird.", "type": "dinner", "start": "2027-01-19T17:00:00-07:00", "end": "2027-01-19T20:00:00-07:00", "date": "2027-01-19", "time": "5–8 PM", "weekly": "Every Tuesday", "tickets": ""}, {"slug": "2027-01-20-17-00-fea13e", "title": "Jazz Guitar Night with Clint Dadian", "desc": "Clint Dadian and a rotating guest guitarist play jazz guitar duos through dinner.", "type": "dinner", "start": "2027-01-20T17:00:00-07:00", "end": "2027-01-20T20:00:00-07:00", "date": "2027-01-20", "time": "5–8 PM", "weekly": "Every Wednesday", "tickets": ""}, {"slug": "2027-01-21-17-00-964a61", "title": "Mobius Jazz", "desc": "Thursday-night dinner jazz from Mobius, a Hummingbird regular.", "type": "dinner", "start": "2027-01-21T17:00:00-07:00", "end": "2027-01-21T20:00:00-07:00", "date": "2027-01-21", "time": "5–8 PM", "weekly": "Every Thursday", "tickets": ""}], "built": "2026-10-24T17:59:00.921919+00:00", "reserve": "https://evergreenhummingbird.com/reservations", "site": "https://localbeatandy.github.io/ecd-events-widget/hummingbird/", "location": "Hummingbird Club, 1338 County Rd 65, Evergreen, CO 80439"};
+(function () {
+  var TZ = 'America/Denver';
+  var TYPES = [['all', 'All events'], ['brunch', 'Brunch music'], ['dinner', 'Dinner music'], ['special', 'Special events']];
+  var TYPE_LABEL = { brunch: 'Brunch music', dinner: 'Dinner music', special: 'Special event' };
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var DOW_LONG = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function denverDate(d) { // YYYY-MM-DD in Denver
+    var p = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d);
+    var o = {}; p.forEach(function (x) { o[x.type] = x.value; });
+    return o.year + '-' + o.month + '-' + o.day;
+  }
+  function addDays(iso, n) { var d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function dowOf(iso) { return new Date(iso + 'T12:00:00Z').getUTCDay(); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function utcStamp(iso) { return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); }
+
+  var now = new Date();
+  var TODAY = denverDate(now);
+  var EVENTS = DATA.events.filter(function (e) { return new Date(e.end) > now; });
+
+  // date ranges: weekend, next 7 days, and each month that has events
+  var dw = dowOf(TODAY); // weekend = Fri-Sun; from today if it's already the weekend
+  var wkStart = dw === 0 || dw >= 5 ? TODAY : addDays(TODAY, 5 - dw);
+  var wkEnd = dw === 0 ? TODAY : addDays(TODAY, 7 - dw);
+  var RANGES = [['upcoming', 'All upcoming', null, null], ['weekend', 'This weekend', wkStart, wkEnd], ['week', 'Next 7 days', TODAY, addDays(TODAY, 6)]];
+  var seenM = {};
+  EVENTS.forEach(function (e) { var m = e.date.slice(0, 7); if (!seenM[m] && Object.keys(seenM).length < 3) seenM[m] = 1; });
+  Object.keys(seenM).forEach(function (m) {
+    if (m === TODAY.slice(0, 7)) return;
+    RANGES.push([m, MONTHS[+m.slice(5) - 1], m + '-01', m + '-31']);
+  });
+
+  var state = { view: 'list', type: 'all', range: 'upcoming', from: '', month: TODAY.slice(0, 7), sel: '' };
+  try { var v = sessionStorage.getItem('hb-view'); if (v === 'cal' || v === 'list') state.view = v; } catch (e) {}
+
+  function visible() {
+    return EVENTS.filter(function (e) {
+      if (state.type !== 'all' && e.type !== state.type) return false;
+      if (state.view === 'cal') return true;
+      if (state.range === 'from') return e.date >= (state.from || TODAY);
+      var r = RANGES.filter(function (x) { return x[0] === state.range; })[0];
+      return !r || !r[2] || (e.date >= r[2] && e.date <= r[3]);
+    });
+  }
+
+  // ---------- add to calendar
+  function calMenu(e) {
+    var details = e.desc + (e.tickets ? '\n\nTickets: ' + e.tickets : '\n\nReserve a table: ' + DATA.reserve);
+    var g = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent(e.title) +
+      '&dates=' + utcStamp(e.start) + '/' + utcStamp(e.end) +
+      '&details=' + encodeURIComponent(details) +
+      '&location=' + encodeURIComponent(DATA.location) + '&ctz=' + encodeURIComponent(TZ);
+    var o = 'https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent' +
+      '&subject=' + encodeURIComponent(e.title) +
+      '&startdt=' + encodeURIComponent(new Date(e.start).toISOString()) +
+      '&enddt=' + encodeURIComponent(new Date(e.end).toISOString()) +
+      '&body=' + encodeURIComponent(details) + '&location=' + encodeURIComponent(DATA.location);
+    var ics = DATA.site + 'e/' + e.slug + '.ics';
+    return '<details class="menu"><summary aria-label="Add ' + esc(e.title) + ' to your calendar">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M12 12v6M9 15h6"/></svg>' +
+      'Add to calendar</summary><div class="menu-list">' +
+      '<a href="' + esc(g) + '" target="_blank" rel="noopener">Google Calendar</a>' +
+      '<a href="' + esc(ics) + '" download>Apple Calendar / iPhone</a>' +
+      '<a href="' + esc(ics) + '" download>Outlook (desktop)</a>' +
+      '<a href="' + esc(o) + '" target="_blank" rel="noopener">Outlook.com</a>' +
+      '</div></details>';
+  }
+
+  function card(e) {
+    var d = new Date(e.date + 'T12:00:00Z');
+    var today = e.date === TODAY;
+    var action = e.tickets
+      ? '<a class="btn" href="' + esc(e.tickets) + '" target="_blank" rel="noopener">Get tickets</a>'
+      : '<a class="btn" href="' + esc(DATA.reserve) + '" target="_top">Reserve a table</a>';
+    return '<article class="card' + (today ? ' today' : '') + '">' +
+      '<div class="datebox" aria-hidden="true"><span class="m">' + MONTHS[d.getUTCMonth()].slice(0, 3).toUpperCase() + '</span>' +
+      '<span class="d">' + d.getUTCDate() + '</span><span class="w">' + DOW[d.getUTCDay()] + '</span></div>' +
+      '<div class="body"><div class="titlerow">' + (today ? '<span class="tonight">' + (e.type === 'brunch' ? 'TODAY' : 'TONIGHT') + '</span>' : '') +
+      '<h3>' + esc(e.title) + '</h3></div>' +
+      '<div class="meta"><span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>' +
+      DOW_LONG[d.getUTCDay()] + '<span class="sr">, ' + MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate() + '</span> · ' + esc(e.time) + '</span>' +
+      '<span class="tag t-' + e.type + '">' + TYPE_LABEL[e.type] + '</span>' +
+      (e.weekly ? '<span class="weekly"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>' + esc(e.weekly) + '</span>' : '') +
+      '</div>' + (e.desc ? '<p class="desc">' + esc(e.desc) + '</p>' : '') + '</div>' +
+      '<div class="actions">' + action + calMenu(e) + '</div></article>';
+  }
+
+  function renderList(list) {
+    if (!list.length) return '<div class="empty"><p>Nothing on the books yet</p><p>Try another type or date, or check back soon.</p></div>';
+    var out = '', cur = '';
+    list.forEach(function (e) {
+      var m = MONTHS[+e.date.slice(5, 7) - 1] + ' ' + e.date.slice(0, 4);
+      if (m !== cur) { if (cur) out += '</div></section>'; out += '<section class="month"><h2>' + m + '</h2><div class="cards">'; cur = m; }
+      out += card(e);
+    });
+    return out + '</div></section>';
+  }
+
+  function renderCal(list) {
+    var months = EVENTS.map(function (e) { return e.date.slice(0, 7); });
+    var first = TODAY.slice(0, 7), last = months.length ? months[months.length - 1] : first;
+    var m = state.month, y = +m.slice(0, 4), mo = +m.slice(5) - 1;
+    var start = new Date(Date.UTC(y, mo, 1)), days = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate();
+    var byDay = {};
+    list.forEach(function (e) { (byDay[e.date] = byDay[e.date] || []).push(e); });
+    var h = '<div class="calhead"><button class="navbtn" data-nav="-1" aria-label="Previous month"' + (m <= first ? ' disabled' : '') + '>‹</button>' +
+      '<h2>' + MONTHS[mo] + ' ' + y + '</h2><button class="navbtn" data-nav="1" aria-label="Next month"' + (m >= last ? ' disabled' : '') + '>›</button></div>';
+    h += '<div class="grid" role="grid">' + DOW.map(function (d) { return '<div class="dow">' + d + '</div>'; }).join('');
+    for (var i = 0; i < start.getUTCDay(); i++) h += '<div class="day out"></div>';
+    for (var d = 1; d <= days; d++) {
+      var iso = m + '-' + (d < 10 ? '0' : '') + d, evs = byDay[iso] || [];
+      var cls = 'day' + (evs.length ? ' has' : '') + (iso === TODAY ? ' today' : '') + (iso === state.sel ? ' sel' : '') + (iso < TODAY ? ' past' : '');
+      var lab = MONTHS[mo] + ' ' + d + (evs.length ? ': ' + evs.map(function (e) { return e.title; }).join(', ') : ': no events');
+      h += '<' + (evs.length ? 'button type="button" data-day="' + iso + '"' : 'div') + ' class="' + cls + '" aria-label="' + esc(lab) + '">' +
+        '<span class="num">' + d + '</span>' +
+        evs.map(function (e) { return '<span class="pill t-' + e.type + '"><span>' + esc(e.title) + '</span></span>'; }).join('') +
+        '<span class="dots">' + evs.map(function (e) { return '<i class="t-' + e.type + '"></i>'; }).join('') + '</span>' +
+        '</' + (evs.length ? 'button' : 'div') + '>';
+    }
+    h += '</div>';
+    if (state.sel && byDay[state.sel]) {
+      h += '<div class="dayevents cards">' + byDay[state.sel].map(card).join('') + '</div>';
+    } else {
+      h += '<p class="closed">Tap a day to see its events.</p>';
+    }
+    return h;
+  }
+
+  function chips(el, items, key) {
+    el.innerHTML = items.map(function (t) {
+      return '<button type="button" class="chip" data-' + key + '="' + t[0] + '" aria-pressed="' + (state[key] === t[0]) + '">' + t[1] + '</button>';
+    }).join('');
+  }
+
+  function render() {
+    var list = visible();
+    chips(document.getElementById('typeChips'), TYPES, 'type');
+    chips(document.getElementById('rangeChips'), RANGES, 'range');
+    document.getElementById('whenRow').hidden = state.view === 'cal';
+    document.getElementById('from').value = state.range === 'from' ? state.from : '';
+    document.querySelectorAll('.views button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.view === state.view); });
+    var lv = document.getElementById('listView'), cv = document.getElementById('calView');
+    lv.hidden = state.view !== 'list'; cv.hidden = state.view !== 'cal';
+    if (state.view === 'list') {
+      lv.innerHTML = renderList(list);
+      document.getElementById('count').textContent = list.length + (list.length === 1 ? ' event' : ' events');
+    } else {
+      cv.innerHTML = renderCal(list);
+      var n = list.filter(function (e) { return e.date.slice(0, 7) === state.month; }).length;
+      document.getElementById('count').textContent = n + (n === 1 ? ' event' : ' events') + ' in ' + MONTHS[+state.month.slice(5) - 1];
+    }
+    postHeight();
+  }
+
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('button');
+    // close other open menus
+    document.querySelectorAll('details.menu[open]').forEach(function (d) { if (!d.contains(ev.target)) d.open = false; });
+    if (!t) return;
+    if (t.dataset.view) { state.view = t.dataset.view; try { sessionStorage.setItem('hb-view', state.view); } catch (e) {} render(); }
+    else if (t.dataset.type) { state.type = t.dataset.type; render(); }
+    else if (t.dataset.range) { state.range = t.dataset.range; state.from = ''; render(); }
+    else if (t.dataset.nav) {
+      var y = +state.month.slice(0, 4), m = +state.month.slice(5) - 1 + (+t.dataset.nav);
+      var d = new Date(Date.UTC(y, m, 1)); state.month = d.toISOString().slice(0, 7); state.sel = ''; render();
+    } else if (t.dataset.day) { state.sel = state.sel === t.dataset.day ? '' : t.dataset.day; render(); }
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') document.querySelectorAll('details.menu[open]').forEach(function (d) { d.open = false; d.querySelector('summary').focus(); });
+  });
+  document.addEventListener('toggle', postHeight, true);
+  document.getElementById('from').addEventListener('change', function (ev) {
+    state.range = ev.target.value ? 'from' : 'upcoming'; state.from = ev.target.value; render();
+  });
+
+  // subscribe links
+  var feed = DATA.site.replace(/^https?:/, '') + 'hummingbird.ics';
+  document.getElementById('subGoogle').href = 'https://calendar.google.com/calendar/render?cid=' + encodeURIComponent('webcal:' + feed);
+  document.getElementById('subApple').href = 'webcal:' + feed;
+  document.getElementById('subOutlook').href = 'https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent('https:' + feed) + '&name=' + encodeURIComponent('Hummingbird Club live music');
+  document.getElementById('subCopy').addEventListener('click', function () {
+    var b = this, url = 'https:' + feed;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () {
+      b.textContent = 'Link copied ✓';
+    }, function () { window.prompt('Copy this calendar link:', url); });
+  });
+
+  // when embedded in an iframe, tell the parent page how tall we are
+  function postHeight() {
+    if (window.parent === window) return;
+    var h = document.documentElement.scrollHeight + 160; // room for an open menu
+    try { window.parent.postMessage({ hummingbirdEventsHeight: h }, '*'); } catch (e) {}
+  }
+  window.addEventListener('resize', postHeight);
+  document.fonts && document.fonts.ready.then(postHeight);
+
+  render();
+})();
+</script>
+<style>.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+</body>
+</html>

@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Nylon Sun
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-10-30-17-00-baf1f2@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261030T230000Z
+DTEND:20261031T020000Z
+SUMMARY:Nylon Sun
+DESCRIPTION:Brad Turner's bossa nova sound\, applied to classic covers.\n\n
+ Reserve a table: https://evergreenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

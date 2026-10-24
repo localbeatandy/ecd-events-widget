@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Halloween Brunch: Chaz DePaolo Trio
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-10-31-11-00-9eb051@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261031T170000Z
+DTEND:20261031T200000Z
+SUMMARY:Halloween Brunch: Chaz DePaolo Trio
+DESCRIPTION:Part one of our Halloween double header: the Chaz DePaolo Trio 
+ plays brunch.\n\nReserve a table: https://evergreenhummingbird.com/reserva
+ tions
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

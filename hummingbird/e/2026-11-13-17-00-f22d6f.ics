@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Alexa Kilgore
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-13-17-00-f22d6f@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261114T000000Z
+DTEND:20261114T030000Z
+SUMMARY:Alexa Kilgore
+DESCRIPTION:Alexa Kilgore plays a solo set for Friday dinner.\n\nReserve a 
+ table: https://evergreenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

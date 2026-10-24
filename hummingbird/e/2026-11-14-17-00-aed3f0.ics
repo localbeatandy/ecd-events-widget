@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Birthday Celebration for Chaz DePaolo
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-14-17-00-aed3f0@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261115T000000Z
+DTEND:20261115T030000Z
+SUMMARY:Birthday Celebration for Chaz DePaolo
+DESCRIPTION:Chaz DePaolo celebrates his birthday with a duo set at dinner. 
+ Come raise a glass.\n\nReserve a table: https://evergreenhummingbird.com/r
+ eservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

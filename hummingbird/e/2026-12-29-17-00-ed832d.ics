@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Piano Night
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-12-29-17-00-ed832d@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261230T000000Z
+DTEND:20261230T030000Z
+SUMMARY:Piano Night
+DESCRIPTION:Solo piano with dinner\, a Tuesday-night tradition at the Hummi
+ ngbird.\n\nReserve a table: https://evergreenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

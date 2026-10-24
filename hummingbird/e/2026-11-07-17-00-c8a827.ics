@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Kismet Jazz Jam
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-07-17-00-c8a827@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261108T000000Z
+DTEND:20261108T030000Z
+SUMMARY:Kismet Jazz Jam
+DESCRIPTION:The Kismet open jam moves to Saturday dinner\, hosted by Jonny 
+ Sharpton & Craig Abbes.\n\nReserve a table: https://evergreenhummingbird.c
+ om/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR

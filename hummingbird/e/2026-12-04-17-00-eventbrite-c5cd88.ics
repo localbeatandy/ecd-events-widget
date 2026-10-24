@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Shabbat & the First Night of Chanukah
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-12-04-17-00-eventbrite-c5cd88@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261205T000000Z
+DTEND:20261205T030000Z
+SUMMARY:Shabbat & the First Night of Chanukah
+DESCRIPTION:Gather for Shabbat dinner and music on the first night of Chanu
+ kah.\n\nTickets: https://www.eventbrite.com/e/2003432012079
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://www.eventbrite.com/e/2003432012079
+END:VEVENT
+END:VCALENDAR

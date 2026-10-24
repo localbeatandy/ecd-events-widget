@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Album Release Party: Dan Codiga
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-06-17-00-3c86c9@hummingbird.localbeat
+DTSTAMP:20261024T175900Z
+DTSTART:20261107T000000Z
+DTEND:20261107T030000Z
+SUMMARY:Album Release Party: Dan Codiga
+DESCRIPTION:Dan Codiga celebrates his new album with a dinner set at the Hu
+ mmingbird.\n\nReserve a table: https://evergreenhummingbird.com/reservatio
+ ns
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
