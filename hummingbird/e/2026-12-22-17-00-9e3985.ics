@@ -3,18 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Piano Night
+X-WR-CALNAME:Live Music with Chaz
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-12-22-17-00-9e3985@hummingbird.localbeat
-DTSTAMP:20261026T225721Z
+DTSTAMP:20261026T230925Z
 DTSTART:20261223T000000Z
 DTEND:20261223T030000Z
-SUMMARY:Piano Night
-DESCRIPTION:Solo piano with dinner\, a Tuesday-night tradition at the Hummi
- ngbird.\n\nReserve a table: https://evergreenhummingbird.com/reservations
+SUMMARY:Live Music with Chaz
+DESCRIPTION:Chaz plays a solo set during dinner at the Hummingbird Club\, 5
+  to 8 PM.\n\nReserve a table: https://evergreenhummingbird.com/reservation
+ s
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
