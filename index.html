@@ -3137,6 +3137,8 @@ try{ if(typeof render==='function') render(); }catch(x){}
 </script>
 <script>
 /* Host handshake + listings scrolling requested by the ECD site's embed script (Oct 19). */
+function __ecdAskHost(){try{if(parent!==window)parent.postMessage({ecdHello:1},'*');}catch(e){}}
+__ecdAskHost();document.addEventListener('DOMContentLoaded',__ecdAskHost);window.addEventListener('load',__ecdAskHost);setTimeout(__ecdAskHost,3000);
 window.addEventListener('message',function(e){var d=e.data||{};
   if(d.ecdHost){window.__ecdHost=true;}
   if(d.ecdOpenReport){var t=0,go=function(){var f=document.querySelector('.evframe.on');try{f.contentWindow.openReport(null,d.ecdOpenReport);}catch(x){if(++t<20)setTimeout(go,300);}};go();}
