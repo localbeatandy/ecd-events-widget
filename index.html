@@ -1295,7 +1295,8 @@ function drawPins(list){
     if(e.lat==null||e.lng==null) return;
     const m=L.marker([e.lat,e.lng],{icon:L.divIcon({className:'',
       html:'<div class="pin" style="background:'+(CAT_COLORS[e.cat]||'#4A542F')+'">'+icon(e.cat,14)+'</div>',
-      iconSize:[27,27], iconAnchor:[13.5,13.5], popupAnchor:[0,-15]})}).addTo(map);
+      iconSize:[27,27], iconAnchor:[13.5,13.5], popupAnchor:[0,-15]}),
+      zIndexOffset:(list.length-i)*1000}).addTo(map);  /* soonest event's pin on top of a venue's stack (Oct 27) */
     m.bindPopup('<b>'+esc(e.name)+'</b><span class="pm">'+fmtWhen(e)+'<br>'+esc(e.venue||'')
       +'</span><a class="dirlink" href="'+esc(dirUrl(e))+'" target="_blank" rel="noopener">Driving directions &rarr;</a>');
     m.on('click',()=>focus(i,true));
