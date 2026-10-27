@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Exit 119
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2027-01-01-11-00-407fd6@hummingbird.localbeat
+DTSTAMP:20261027T181846Z
+DTSTART:20270101T180000Z
+DTEND:20270101T210000Z
+SUMMARY:Exit 119
+DESCRIPTION:Exit 119 brings a five-piece americana sound with a New Orleans
+  twist to Friday brunch at the Hummingbird Club.\n\nReserve a table: https
+ ://evergreenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
