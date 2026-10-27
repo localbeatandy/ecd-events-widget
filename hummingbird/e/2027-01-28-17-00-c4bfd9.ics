@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Mobius Jazz
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2027-01-28-17-00-c4bfd9@hummingbird.localbeat
+DTSTAMP:20261027T122953Z
+DTSTART:20270129T000000Z
+DTEND:20270129T030000Z
+SUMMARY:Mobius Jazz
+DESCRIPTION:Mobius brings a trio to the Hummingbird for live music during T
+ hursday dinner\, from 5 to 8 PM.\n\nReserve a table: https://evergreenhumm
+ ingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
