@@ -1112,9 +1112,12 @@ function dateRange(){
 }
 function matchText(e){
   if(!S.q) return true;
-  const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
-    .toLowerCase().includes(q);
+  /* word search (Oct 28): every word typed must appear, any order — "conifer high school" finds Conifer Senior High School;
+     apostrophes/punctuation ignored ("taspens" finds Taspen's) */
+  const nz=x=>String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['\u2019`]/g,'').replace(/[^a-z0-9]+/g,' ');
+  const words=nz(S.q).trim().split(' ').filter(Boolean); if(!words.length) return true;
+  if(!e._st) e._st=' '+nz(e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))+' ';
+  return words.every(w=>e._st.includes(w));
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
 function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
@@ -1919,9 +1922,12 @@ function dateRange(){
 }
 function matchText(e){
   if(!S.q) return true;
-  const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
-    .toLowerCase().includes(q);
+  /* word search (Oct 28): every word typed must appear, any order — "conifer high school" finds Conifer Senior High School;
+     apostrophes/punctuation ignored ("taspens" finds Taspen's) */
+  const nz=x=>String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['\u2019`]/g,'').replace(/[^a-z0-9]+/g,' ');
+  const words=nz(S.q).trim().split(' ').filter(Boolean); if(!words.length) return true;
+  if(!e._st) e._st=' '+nz(e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))+' ';
+  return words.every(w=>e._st.includes(w));
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
 function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
@@ -2721,9 +2727,12 @@ function dateRange(){
 }
 function matchText(e){
   if(!S.q) return true;
-  const q=S.q.toLowerCase();
-  return (e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))
-    .toLowerCase().includes(q);
+  /* word search (Oct 28): every word typed must appear, any order — "conifer high school" finds Conifer Senior High School;
+     apostrophes/punctuation ignored ("taspens" finds Taspen's) */
+  const nz=x=>String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/['\u2019`]/g,'').replace(/[^a-z0-9]+/g,' ');
+  const words=nz(S.q).trim().split(' ').filter(Boolean); if(!words.length) return true;
+  if(!e._st) e._st=' '+nz(e.name+' '+(e.venue||'')+' '+(e.city||'')+' '+(e.desc||'')+' '+(e.cats||[e.cat]).join(' ')+' '+(e.topics||[]).join(' '))+' ';
+  return words.every(w=>e._st.includes(w));
 }
 function matchDate(e){ const [a,b]=dateRange(); const t=d0(e._d); return t>=a && t<=b; }
 function matchCat(e){ return S.cats.size===0 || (e.cats||[e.cat]).some(c=>S.cats.has(c)); }
