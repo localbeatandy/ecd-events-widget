@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:New Year's Dinner: Corned Beef & Cabbage with Black Eyed Peas
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2027-01-01-17-00-1ad032@hummingbird.localbeat
+DTSTAMP:20261028T214340Z
+DTSTART:20270102T000000Z
+DTEND:20270102T030000Z
+SUMMARY:New Year's Dinner: Corned Beef & Cabbage with Black Eyed Peas
+DESCRIPTION:A traditional New Orleans New Year's dinner of corned beef and 
+ cabbage with black eyed peas\, with live music during dinner.\n\nReserve a
+  table: https://evergreenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
