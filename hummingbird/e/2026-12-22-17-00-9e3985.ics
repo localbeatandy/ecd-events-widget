@@ -3,19 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Live Music with Chaz
+X-WR-CALNAME:Live Music with Chaz DePaolo
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-12-22-17-00-9e3985@hummingbird.localbeat
-DTSTAMP:20261027T194659Z
+DTSTAMP:20261028T123507Z
 DTSTART:20261223T000000Z
 DTEND:20261223T030000Z
-SUMMARY:Live Music with Chaz
-DESCRIPTION:Chaz plays a solo set during dinner at the Hummingbird Club\, 5
-  to 8 PM.\n\nReserve a table: https://evergreenhummingbird.com/reservation
- s
+SUMMARY:Live Music with Chaz DePaolo
+DESCRIPTION:Chaz DePaolo plays live music during Tuesday dinner at the Humm
+ ingbird Club.\n\nReserve a table: https://evergreenhummingbird.com/reserva
+ tions
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT

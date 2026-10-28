@@ -3,18 +3,18 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Brunch Music
+X-WR-CALNAME:Jazz Piano Brunch
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-12-13-11-00-beb764@hummingbird.localbeat
-DTSTAMP:20261027T194659Z
+DTSTAMP:20261028T123507Z
 DTSTART:20261213T180000Z
 DTEND:20261213T210000Z
-SUMMARY:Brunch Music
-DESCRIPTION:Live music with Sunday brunch. Lineup to be announced.\n\nReser
- ve a table: https://evergreenhummingbird.com/reservations
+SUMMARY:Jazz Piano Brunch
+DESCRIPTION:Live jazz piano during Sunday brunch at the Hummingbird Club.\n
+ \nReserve a table: https://evergreenhummingbird.com/reservations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
