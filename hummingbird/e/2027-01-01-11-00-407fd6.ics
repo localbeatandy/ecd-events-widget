@@ -3,19 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Exit 119
+X-WR-CALNAME:Char-Broiled Oyster Party
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2027-01-01-11-00-407fd6@hummingbird.localbeat
-DTSTAMP:20261028T181533Z
+DTSTAMP:20261028T194916Z
 DTSTART:20270101T180000Z
 DTEND:20270101T210000Z
-SUMMARY:Exit 119
-DESCRIPTION:Exit 119 brings a five-piece americana sound with a New Orleans
-  twist to Friday brunch at the Hummingbird Club.\n\nReserve a table: https
- ://evergreenhummingbird.com/reservations
+SUMMARY:Char-Broiled Oyster Party
+DESCRIPTION:Our New Year's Day Char-Broiled Oyster Party brings a five-piec
+ e americana band with a New Orleans twist to brunch\, 11 AM to 2 PM.\n\nRe
+ serve a table: https://evergreenhummingbird.com/reservations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
