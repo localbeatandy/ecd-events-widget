@@ -1502,7 +1502,7 @@ function place(){var dr=q('#drawer'),sc=q('#scrim');
     if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
       sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
   dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
-function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+function when(e){try{return String(fmtWhen(e)).replace(/<[^>]*>/g,'')+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
 window.openReport=function(e,mode){
   var dr=q('#drawer');if(!dr)return;
   var sub=(mode==='submit');
@@ -1562,6 +1562,86 @@ function range(e){
 }
 try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
 try{ if(typeof render==='function') render(); }catch(x){}
+})();</script>
+<style>
+/* Oct 31: events that are over drop off; in-progress ones are tagged; calendar greys today's earlier events */
+.nowtag{display:inline-block;margin-left:8px;padding:1px 7px 2px;border-radius:3px;background:#B4532A;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;vertical-align:1px;white-space:nowrap;line-height:1.5}
+.pastmark{display:none}
+.card:has(.pastmark){opacity:.5}
+.card:has(.pastmark):hover{opacity:.85}
+.card:has(.pastmark) .when::after{content:' \00b7  Earlier today';font-style:italic}
+.cell .ev.past{opacity:.4}
+</style>
+<script>(function(){
+var CAL=!!document.getElementById('grid'), H=3600000;
+function ymd(s){return /^\d{4}-\d{2}-\d{2}$/.test(s||'');}
+function offOf(s){var m=/(Z|[+-]\d{2}:?\d{2})$/.exec(s||'');return m?m[1]:'';}
+/* date-only starts are calendar days, not UTC midnight (fixes all-day events landing on the previous evening) */
+EV.forEach(function(e){ if(ymd(e.start)){ e._d=new Date(e.start+'T00:00:00'); e._k=key(e._d); e.allDay=true; } });
+function parse(raw,start){
+  if(ymd(raw)) return new Date(raw+'T00:00:00');
+  var r=String(raw).trim().replace(' ','T');
+  if(!offOf(r)){ r=r.slice(0,19); var o=offOf(start); if(o) r+=o; }   /* no time zone given: use the start's (Mountain) offset */
+  var d=new Date(r); return isNaN(d)?null:d;
+}
+/* when an event is over: its end time; no end = start + 3 hours; all-day = midnight after (or the date-only end, iCal-style) */
+function endOf(e){
+  if(e._end) return e._end;
+  var s=e._d, raw=e.end||'', en=null;
+  if(e.allDay){
+    en=new Date(s.getFullYear(),s.getMonth(),s.getDate()+1);
+    if(raw){ var d=parse(raw,e.start); if(d && d>en) en=d; }
+    return e._end=en;
+  }
+  if(raw){ en=parse(raw,e.start);
+    if(en && en<=s){ var nx=new Date(en.getTime()+24*H); en=(nx-s<=16*H)?nx:null; }   /* "10pm–1am" stored without the next day */
+  }
+  return e._end = en || new Date(s.getTime()+3*H);
+}
+function over(e){ return endOf(e).getTime()<=Date.now(); }
+function isNow(e){ if(over(e)) return false;
+  return e.allDay ? e._d<d0(TODAY) : e._d.getTime()<=Date.now(); }
+window.__ecdOver=over; window.__ecdNow=isNow;
+
+matchDate=function(e){
+  var r=dateRange(), a=r[0], b=r[1], sd=d0(e._d), t0=d0(TODAY), inR=false;
+  if(sd>=a && sd<=b) inR=true;
+  else if(sd<a && sd<=b){ var en=endOf(e);   /* started earlier, still running */
+    inR = (+a===+t0 && en.getTime()>Date.now()) || (en-e._d>=12*H && en>a); }
+  if(!inR) return false;
+  if(CAL && sd<t0) e._k=key(t0);              /* calendar: show a still-running event on today's square */
+  if(over(e)) return CAL && +sd===+t0;        /* calendar keeps today's earlier events, greyed */
+  return true;
+};
+
+var fw=fmtWhen;
+fmtWhen=function(e){ var s=fw(e);
+  if(over(e)) return s+'<i class="pastmark"></i>';
+  if(isNow(e)) return s+'<span class="nowtag">Happening now</span>';
+  return s; };
+
+if(CAL){
+  var bf=filtered;   /* today's square: upcoming first, finished ones after */
+  filtered=function(){ var a=bf(), up=[], done=[]; a.forEach(function(e){ (over(e)?done:up).push(e); }); return up.concat(done); };
+}
+var last='';
+function sig(){ try{ return filtered().map(function(e){return e.id+(isNow(e)?'*':'');}).join('|'); }catch(x){ return ''; } }
+var br=render;
+render=function(){ var r=br.apply(this,arguments);
+  if(CAL){ try{ var k=key(d0(TODAY)), cell=document.querySelector('.cell[data-k="'+k+'"]');
+    if(cell){ var n=filtered().filter(function(e){return e._k===k && !over(e);}).length;
+      cell.querySelectorAll('.ev').forEach(function(s,i){ if(i>=n) s.classList.add('past'); }); } }catch(x){} }
+  last=sig(); return r; };
+
+/* keep the list current while the page stays open: re-check every minute, redraw only if something changed
+   and the visitor hasn't touched the page for 4 minutes (or when they come back to the tab) */
+var act=Date.now();
+['pointerdown','wheel','keydown','touchstart','input'].forEach(function(t){ addEventListener(t,function(){act=Date.now();},{passive:true,capture:true}); });
+function refresh(){ var s=sig(); if(s!==last){ try{ render(); }catch(x){} } }
+setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh(); },60000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
+try{ render(); }catch(x){}
 })();</script>
 </template>
 <template id="evtpl-list">
@@ -2257,7 +2337,7 @@ function place(){var dr=q('#drawer'),sc=q('#scrim');
     if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
       sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
   dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
-function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+function when(e){try{return String(fmtWhen(e)).replace(/<[^>]*>/g,'')+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
 window.openReport=function(e,mode){
   var dr=q('#drawer');if(!dr)return;
   var sub=(mode==='submit');
@@ -2317,6 +2397,86 @@ function range(e){
 }
 try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
 try{ if(typeof render==='function') render(); }catch(x){}
+})();</script>
+<style>
+/* Oct 31: events that are over drop off; in-progress ones are tagged; calendar greys today's earlier events */
+.nowtag{display:inline-block;margin-left:8px;padding:1px 7px 2px;border-radius:3px;background:#B4532A;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;vertical-align:1px;white-space:nowrap;line-height:1.5}
+.pastmark{display:none}
+.card:has(.pastmark){opacity:.5}
+.card:has(.pastmark):hover{opacity:.85}
+.card:has(.pastmark) .when::after{content:' \00b7  Earlier today';font-style:italic}
+.cell .ev.past{opacity:.4}
+</style>
+<script>(function(){
+var CAL=!!document.getElementById('grid'), H=3600000;
+function ymd(s){return /^\d{4}-\d{2}-\d{2}$/.test(s||'');}
+function offOf(s){var m=/(Z|[+-]\d{2}:?\d{2})$/.exec(s||'');return m?m[1]:'';}
+/* date-only starts are calendar days, not UTC midnight (fixes all-day events landing on the previous evening) */
+EV.forEach(function(e){ if(ymd(e.start)){ e._d=new Date(e.start+'T00:00:00'); e._k=key(e._d); e.allDay=true; } });
+function parse(raw,start){
+  if(ymd(raw)) return new Date(raw+'T00:00:00');
+  var r=String(raw).trim().replace(' ','T');
+  if(!offOf(r)){ r=r.slice(0,19); var o=offOf(start); if(o) r+=o; }   /* no time zone given: use the start's (Mountain) offset */
+  var d=new Date(r); return isNaN(d)?null:d;
+}
+/* when an event is over: its end time; no end = start + 3 hours; all-day = midnight after (or the date-only end, iCal-style) */
+function endOf(e){
+  if(e._end) return e._end;
+  var s=e._d, raw=e.end||'', en=null;
+  if(e.allDay){
+    en=new Date(s.getFullYear(),s.getMonth(),s.getDate()+1);
+    if(raw){ var d=parse(raw,e.start); if(d && d>en) en=d; }
+    return e._end=en;
+  }
+  if(raw){ en=parse(raw,e.start);
+    if(en && en<=s){ var nx=new Date(en.getTime()+24*H); en=(nx-s<=16*H)?nx:null; }   /* "10pm–1am" stored without the next day */
+  }
+  return e._end = en || new Date(s.getTime()+3*H);
+}
+function over(e){ return endOf(e).getTime()<=Date.now(); }
+function isNow(e){ if(over(e)) return false;
+  return e.allDay ? e._d<d0(TODAY) : e._d.getTime()<=Date.now(); }
+window.__ecdOver=over; window.__ecdNow=isNow;
+
+matchDate=function(e){
+  var r=dateRange(), a=r[0], b=r[1], sd=d0(e._d), t0=d0(TODAY), inR=false;
+  if(sd>=a && sd<=b) inR=true;
+  else if(sd<a && sd<=b){ var en=endOf(e);   /* started earlier, still running */
+    inR = (+a===+t0 && en.getTime()>Date.now()) || (en-e._d>=12*H && en>a); }
+  if(!inR) return false;
+  if(CAL && sd<t0) e._k=key(t0);              /* calendar: show a still-running event on today's square */
+  if(over(e)) return CAL && +sd===+t0;        /* calendar keeps today's earlier events, greyed */
+  return true;
+};
+
+var fw=fmtWhen;
+fmtWhen=function(e){ var s=fw(e);
+  if(over(e)) return s+'<i class="pastmark"></i>';
+  if(isNow(e)) return s+'<span class="nowtag">Happening now</span>';
+  return s; };
+
+if(CAL){
+  var bf=filtered;   /* today's square: upcoming first, finished ones after */
+  filtered=function(){ var a=bf(), up=[], done=[]; a.forEach(function(e){ (over(e)?done:up).push(e); }); return up.concat(done); };
+}
+var last='';
+function sig(){ try{ return filtered().map(function(e){return e.id+(isNow(e)?'*':'');}).join('|'); }catch(x){ return ''; } }
+var br=render;
+render=function(){ var r=br.apply(this,arguments);
+  if(CAL){ try{ var k=key(d0(TODAY)), cell=document.querySelector('.cell[data-k="'+k+'"]');
+    if(cell){ var n=filtered().filter(function(e){return e._k===k && !over(e);}).length;
+      cell.querySelectorAll('.ev').forEach(function(s,i){ if(i>=n) s.classList.add('past'); }); } }catch(x){} }
+  last=sig(); return r; };
+
+/* keep the list current while the page stays open: re-check every minute, redraw only if something changed
+   and the visitor hasn't touched the page for 4 minutes (or when they come back to the tab) */
+var act=Date.now();
+['pointerdown','wheel','keydown','touchstart','input'].forEach(function(t){ addEventListener(t,function(){act=Date.now();},{passive:true,capture:true}); });
+function refresh(){ var s=sig(); if(s!==last){ try{ render(); }catch(x){} } }
+setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh(); },60000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
+try{ render(); }catch(x){}
 })();</script>
 </template>
 <template id="evtpl-cal">
@@ -3053,7 +3213,7 @@ function place(){var dr=q('#drawer'),sc=q('#scrim');
     if(r){var top=Math.max(0,-r.top),h=Math.max(360,Math.min(vh,r.height-top));dr.style.position='absolute';dr.style.top=top+'px';dr.style.height=h+'px';
       sc.style.position='absolute';sc.style.height=Math.max(document.body.scrollHeight,r.height)+'px';}}catch(e){}
   dr.classList.add('on');sc.classList.add('on');dr.setAttribute('aria-hidden','false');}
-function when(e){try{return fmtWhen(e)+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
+function when(e){try{return String(fmtWhen(e)).replace(/<[^>]*>/g,'')+' · '+e._d.toDateString();}catch(x){return e&&e.start||'';}}
 window.openReport=function(e,mode){
   var dr=q('#drawer');if(!dr)return;
   var sub=(mode==='submit');
@@ -3113,6 +3273,86 @@ function range(e){
 }
 try{ fmtWhen=function(e){var d=e._d;return DOW[d.getDay()]+' '+MON[d.getMonth()]+' '+d.getDate()+' · '+range(e);}; }catch(x){}
 try{ if(typeof render==='function') render(); }catch(x){}
+})();</script>
+<style>
+/* Oct 31: events that are over drop off; in-progress ones are tagged; calendar greys today's earlier events */
+.nowtag{display:inline-block;margin-left:8px;padding:1px 7px 2px;border-radius:3px;background:#B4532A;color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;vertical-align:1px;white-space:nowrap;line-height:1.5}
+.pastmark{display:none}
+.card:has(.pastmark){opacity:.5}
+.card:has(.pastmark):hover{opacity:.85}
+.card:has(.pastmark) .when::after{content:' \00b7  Earlier today';font-style:italic}
+.cell .ev.past{opacity:.4}
+</style>
+<script>(function(){
+var CAL=!!document.getElementById('grid'), H=3600000;
+function ymd(s){return /^\d{4}-\d{2}-\d{2}$/.test(s||'');}
+function offOf(s){var m=/(Z|[+-]\d{2}:?\d{2})$/.exec(s||'');return m?m[1]:'';}
+/* date-only starts are calendar days, not UTC midnight (fixes all-day events landing on the previous evening) */
+EV.forEach(function(e){ if(ymd(e.start)){ e._d=new Date(e.start+'T00:00:00'); e._k=key(e._d); e.allDay=true; } });
+function parse(raw,start){
+  if(ymd(raw)) return new Date(raw+'T00:00:00');
+  var r=String(raw).trim().replace(' ','T');
+  if(!offOf(r)){ r=r.slice(0,19); var o=offOf(start); if(o) r+=o; }   /* no time zone given: use the start's (Mountain) offset */
+  var d=new Date(r); return isNaN(d)?null:d;
+}
+/* when an event is over: its end time; no end = start + 3 hours; all-day = midnight after (or the date-only end, iCal-style) */
+function endOf(e){
+  if(e._end) return e._end;
+  var s=e._d, raw=e.end||'', en=null;
+  if(e.allDay){
+    en=new Date(s.getFullYear(),s.getMonth(),s.getDate()+1);
+    if(raw){ var d=parse(raw,e.start); if(d && d>en) en=d; }
+    return e._end=en;
+  }
+  if(raw){ en=parse(raw,e.start);
+    if(en && en<=s){ var nx=new Date(en.getTime()+24*H); en=(nx-s<=16*H)?nx:null; }   /* "10pm–1am" stored without the next day */
+  }
+  return e._end = en || new Date(s.getTime()+3*H);
+}
+function over(e){ return endOf(e).getTime()<=Date.now(); }
+function isNow(e){ if(over(e)) return false;
+  return e.allDay ? e._d<d0(TODAY) : e._d.getTime()<=Date.now(); }
+window.__ecdOver=over; window.__ecdNow=isNow;
+
+matchDate=function(e){
+  var r=dateRange(), a=r[0], b=r[1], sd=d0(e._d), t0=d0(TODAY), inR=false;
+  if(sd>=a && sd<=b) inR=true;
+  else if(sd<a && sd<=b){ var en=endOf(e);   /* started earlier, still running */
+    inR = (+a===+t0 && en.getTime()>Date.now()) || (en-e._d>=12*H && en>a); }
+  if(!inR) return false;
+  if(CAL && sd<t0) e._k=key(t0);              /* calendar: show a still-running event on today's square */
+  if(over(e)) return CAL && +sd===+t0;        /* calendar keeps today's earlier events, greyed */
+  return true;
+};
+
+var fw=fmtWhen;
+fmtWhen=function(e){ var s=fw(e);
+  if(over(e)) return s+'<i class="pastmark"></i>';
+  if(isNow(e)) return s+'<span class="nowtag">Happening now</span>';
+  return s; };
+
+if(CAL){
+  var bf=filtered;   /* today's square: upcoming first, finished ones after */
+  filtered=function(){ var a=bf(), up=[], done=[]; a.forEach(function(e){ (over(e)?done:up).push(e); }); return up.concat(done); };
+}
+var last='';
+function sig(){ try{ return filtered().map(function(e){return e.id+(isNow(e)?'*':'');}).join('|'); }catch(x){ return ''; } }
+var br=render;
+render=function(){ var r=br.apply(this,arguments);
+  if(CAL){ try{ var k=key(d0(TODAY)), cell=document.querySelector('.cell[data-k="'+k+'"]');
+    if(cell){ var n=filtered().filter(function(e){return e._k===k && !over(e);}).length;
+      cell.querySelectorAll('.ev').forEach(function(s,i){ if(i>=n) s.classList.add('past'); }); } }catch(x){} }
+  last=sig(); return r; };
+
+/* keep the list current while the page stays open: re-check every minute, redraw only if something changed
+   and the visitor hasn't touched the page for 4 minutes (or when they come back to the tab) */
+var act=Date.now();
+['pointerdown','wheel','keydown','touchstart','input'].forEach(function(t){ addEventListener(t,function(){act=Date.now();},{passive:true,capture:true}); });
+function refresh(){ var s=sig(); if(s!==last){ try{ render(); }catch(x){} } }
+setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh(); },60000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
+try{ render(); }catch(x){}
 })();</script>
 </template>
 <script>
