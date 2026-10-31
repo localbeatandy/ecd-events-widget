@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Halloween Bash: Alpine Jazz (EHS Players)
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-10-31-17-00-extra-6cadc9@hummingbird.localbeat
+DTSTAMP:20261031T142951Z
+DTSTART:20261031T230000Z
+DTEND:20261101T020000Z
+SUMMARY:Halloween Bash: Alpine Jazz (EHS Players)
+DESCRIPTION:The Halloween Bash continues at dinner\, 5-8 PM\, with Alpine J
+ azz featuring Evergreen High School players. Smoked & mulled drinks and th
+ e Dracula Bite cocktail are on the menu.\n\nReserve a table: https://everg
+ reenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
