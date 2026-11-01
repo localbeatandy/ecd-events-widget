@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Mobius Jazz
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-26-17-00-extra-53529a@hummingbird.localbeat
+DTSTAMP:20261101T123218Z
+DTSTART:20261127T000000Z
+DTEND:20261127T030000Z
+SUMMARY:Mobius Jazz
+DESCRIPTION:Thursday-night dinner jazz from Mobius\, a Hummingbird regular.
+ \n\nTickets: https://members.evergreenchamber.org/events/details/mobius-ja
+ zz-11-26-2026-108846
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://members.evergreenchamber.org/events/details/mobius-jazz-11-26-2
+ 026-108846
+END:VEVENT
+END:VCALENDAR
