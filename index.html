@@ -1674,6 +1674,17 @@ html.short .rp-a{display:none !important}
 html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
 html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
 html.short .rp-row{flex-wrap:nowrap !important}
+html.short #countline{white-space:nowrap}
+/* narrow listing column: count + Powered by on line 1, "Errors? Let us know" on line 2 (Nov 3) */
+html.short .rp-head{container-type:inline-size}
+@container (max-width:640px){
+  html.short .rp-row{flex-wrap:wrap !important;row-gap:2px}
+  html.short .rp-inline{order:3;flex-basis:100%;margin-left:0}
+  html.short .rp-dot{display:none}
+}
+@container (max-width:400px){ html.short #countline{white-space:normal} }
+.slimbar .sb-fmt{display:flex;flex:none;white-space:nowrap}
+.slimbar .sb-search{min-width:120px}
 html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
 /* compact Featured card */
 html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
@@ -1698,7 +1709,7 @@ bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0
  +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
 var F=fb(); if(!F) return;
 F.parentNode.insertBefore(bar, F.nextSibling);
-var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Minimize ▴';
 var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
 var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
 
@@ -1706,9 +1717,20 @@ function apply(){
   var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
   R.classList.toggle('short', short);
   var c=short && LOCKED && host() && !EXP;
+  var was=R.classList.contains('compact');
   R.classList.toggle('compact', c);
+  if(was!==c) refitMap();
+  var wasE=R.classList.contains('expanded');
   R.classList.toggle('expanded', short && EXP);
+  if(wasE!==(short && EXP)) refitMap();
 }
+/* the map box changes height when the filters collapse/expand: re-measure and re-fit the pins (Nov 3) */
+function refitMap(){ setTimeout(function(){ try{
+  if(typeof map==='undefined'||!map) return; map.invalidateSize({animate:false});
+  if(typeof markers!=='undefined' && markers.length){
+    map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
+    if(map.getSize().x>600) map.setZoom(Math.min(map.getZoom()+1,13),{animate:false}); }
+}catch(x){} },60); }
 function expand(){ EXP=true; apply(); }
 less.addEventListener('click', function(){ EXP=false; apply(); });
 bar.querySelector('.sb-all').addEventListener('click', expand);
@@ -1736,7 +1758,7 @@ function sync(){
     var cl=document.getElementById('countline');
     if(cl && !cl.parentElement.querySelector('.rp-inline')){
       cl.parentElement.classList.add('rp-row');
-      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline"><span class="rp-dot">· </span>Errors? <a role="button" tabindex="0">Let us know</a></span>');
       cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
         var a=document.querySelector('.rp-a a'); if(a) a.click(); });
     }
@@ -2619,6 +2641,17 @@ html.short .rp-a{display:none !important}
 html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
 html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
 html.short .rp-row{flex-wrap:nowrap !important}
+html.short #countline{white-space:nowrap}
+/* narrow listing column: count + Powered by on line 1, "Errors? Let us know" on line 2 (Nov 3) */
+html.short .rp-head{container-type:inline-size}
+@container (max-width:640px){
+  html.short .rp-row{flex-wrap:wrap !important;row-gap:2px}
+  html.short .rp-inline{order:3;flex-basis:100%;margin-left:0}
+  html.short .rp-dot{display:none}
+}
+@container (max-width:400px){ html.short #countline{white-space:normal} }
+.slimbar .sb-fmt{display:flex;flex:none;white-space:nowrap}
+.slimbar .sb-search{min-width:120px}
 html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
 /* compact Featured card */
 html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
@@ -2643,7 +2676,7 @@ bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0
  +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
 var F=fb(); if(!F) return;
 F.parentNode.insertBefore(bar, F.nextSibling);
-var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Minimize ▴';
 var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
 var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
 
@@ -2651,9 +2684,20 @@ function apply(){
   var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
   R.classList.toggle('short', short);
   var c=short && LOCKED && host() && !EXP;
+  var was=R.classList.contains('compact');
   R.classList.toggle('compact', c);
+  if(was!==c) refitMap();
+  var wasE=R.classList.contains('expanded');
   R.classList.toggle('expanded', short && EXP);
+  if(wasE!==(short && EXP)) refitMap();
 }
+/* the map box changes height when the filters collapse/expand: re-measure and re-fit the pins (Nov 3) */
+function refitMap(){ setTimeout(function(){ try{
+  if(typeof map==='undefined'||!map) return; map.invalidateSize({animate:false});
+  if(typeof markers!=='undefined' && markers.length){
+    map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
+    if(map.getSize().x>600) map.setZoom(Math.min(map.getZoom()+1,13),{animate:false}); }
+}catch(x){} },60); }
 function expand(){ EXP=true; apply(); }
 less.addEventListener('click', function(){ EXP=false; apply(); });
 bar.querySelector('.sb-all').addEventListener('click', expand);
@@ -2681,7 +2725,7 @@ function sync(){
     var cl=document.getElementById('countline');
     if(cl && !cl.parentElement.querySelector('.rp-inline')){
       cl.parentElement.classList.add('rp-row');
-      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline"><span class="rp-dot">· </span>Errors? <a role="button" tabindex="0">Let us know</a></span>');
       cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
         var a=document.querySelector('.rp-a a'); if(a) a.click(); });
     }
@@ -3605,6 +3649,17 @@ html.short .rp-a{display:none !important}
 html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
 html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
 html.short .rp-row{flex-wrap:nowrap !important}
+html.short #countline{white-space:nowrap}
+/* narrow listing column: count + Powered by on line 1, "Errors? Let us know" on line 2 (Nov 3) */
+html.short .rp-head{container-type:inline-size}
+@container (max-width:640px){
+  html.short .rp-row{flex-wrap:wrap !important;row-gap:2px}
+  html.short .rp-inline{order:3;flex-basis:100%;margin-left:0}
+  html.short .rp-dot{display:none}
+}
+@container (max-width:400px){ html.short #countline{white-space:normal} }
+.slimbar .sb-fmt{display:flex;flex:none;white-space:nowrap}
+.slimbar .sb-search{min-width:120px}
 html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
 /* compact Featured card */
 html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
@@ -3629,7 +3684,7 @@ bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0
  +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
 var F=fb(); if(!F) return;
 F.parentNode.insertBefore(bar, F.nextSibling);
-var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Minimize ▴';
 var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
 var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
 
@@ -3637,9 +3692,20 @@ function apply(){
   var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
   R.classList.toggle('short', short);
   var c=short && LOCKED && host() && !EXP;
+  var was=R.classList.contains('compact');
   R.classList.toggle('compact', c);
+  if(was!==c) refitMap();
+  var wasE=R.classList.contains('expanded');
   R.classList.toggle('expanded', short && EXP);
+  if(wasE!==(short && EXP)) refitMap();
 }
+/* the map box changes height when the filters collapse/expand: re-measure and re-fit the pins (Nov 3) */
+function refitMap(){ setTimeout(function(){ try{
+  if(typeof map==='undefined'||!map) return; map.invalidateSize({animate:false});
+  if(typeof markers!=='undefined' && markers.length){
+    map.fitBounds(L.featureGroup(markers).getBounds().pad(0.18),{maxZoom:12,animate:false});
+    if(map.getSize().x>600) map.setZoom(Math.min(map.getZoom()+1,13),{animate:false}); }
+}catch(x){} },60); }
 function expand(){ EXP=true; apply(); }
 less.addEventListener('click', function(){ EXP=false; apply(); });
 bar.querySelector('.sb-all').addEventListener('click', expand);
@@ -3667,7 +3733,7 @@ function sync(){
     var cl=document.getElementById('countline');
     if(cl && !cl.parentElement.querySelector('.rp-inline')){
       cl.parentElement.classList.add('rp-row');
-      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline"><span class="rp-dot">· </span>Errors? <a role="button" tabindex="0">Let us know</a></span>');
       cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
         var a=document.querySelector('.rp-a a'); if(a) a.click(); });
     }
