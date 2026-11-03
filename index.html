@@ -1643,6 +1643,116 @@ setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh()
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
 try{ render(); }catch(x){}
 })();</script>
+<style>
+/* Nov 2: short screens (laptops) — slim filter bar once the calendar is locked under the site header,
+   one-line count, compact Featured card. Big monitors and phones unchanged. */
+.slimbar{display:none}
+html.compact .filterband{display:none}
+html.compact .slimbar{display:flex;flex:none;align-items:center;gap:10px;background:var(--sand,#D9D4CB);padding:9px 26px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);font-family:var(--label,'Montserrat',Arial,sans-serif);position:relative;z-index:5}
+.slimbar .sb-search{flex:0 1 340px;min-width:150px;display:flex;align-items:center;gap:8px;background:var(--cream,#FAF6EF);border-radius:999px;padding:6px 14px;color:var(--ink-faint,#9A948B)}
+.slimbar .sb-search input{border:0;background:transparent;outline:0;font:inherit;font-size:13px;color:var(--charcoal,#5C5648);width:100%;letter-spacing:0;text-transform:none}
+.slimbar .sb-pill{font:inherit;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal,#5C5648);
+  background:var(--cream,#FAF6EF);border:1px solid var(--line,rgba(47,93,58,.16));padding:6px 11px;border-radius:3px;white-space:nowrap;cursor:pointer;line-height:1.3}
+.slimbar .sb-pill:hover{border-color:var(--green,#4A542F)}
+.slimbar .sb-pill.on{background-color:var(--green,#4A542F);color:#fff;border-color:var(--green,#4A542F)}
+.slimbar select.sb-pill{appearance:none;-webkit-appearance:none;padding-right:24px;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 13px) 50%,calc(100% - 9px) 50%;background-size:4px 4px;background-repeat:no-repeat}
+.slimbar select.sb-pill.on{background-color:var(--green,#4A542F)}
+.slimbar .sb-dots{display:inline-flex;margin-right:7px;vertical-align:-1px}
+.slimbar .sb-dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--cream,#FAF6EF);margin-right:-3px;display:inline-block}
+.slimbar .sb-grow{flex:1}
+.slimbar .sb-all{background:var(--gold,#BE9754);border-color:var(--gold,#BE9754);color:#fff}
+.slimbar .sb-all:hover{background:var(--gold-dark,#A67F41);border-color:var(--gold-dark,#A67F41)}
+.sb-less{display:none}
+html.short.expanded .sb-less{display:inline-block;margin-left:auto;font-family:var(--label,'Montserrat',Arial,sans-serif);font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--gold,#BE9754);color:#fff;border:0;border-radius:3px;padding:6px 12px;cursor:pointer}
+/* one-line count card */
+.rp-inline{display:none}
+html.short .rp-a{display:none !important}
+html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
+html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
+html.short .rp-row{flex-wrap:nowrap !important}
+html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
+/* compact Featured card */
+html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
+html.short .fxA .bd{padding:11px 16px}
+html.short .fx-title{font-size:17px}
+html.short .fx-sub{font-size:13px}
+html.short .fx-meta{font-size:13px;margin-top:4px}
+html.short .fx-host{display:none}
+html.short .fx-desc{font-size:13px;line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.short .fx-ft{padding-top:7px}
+html.short .fx-btn{padding:7px 14px}
+</style>
+<script>(function(){
+var R=document.documentElement, LOCKED=false, EXP=false;
+function host(){ try{ return !!parent.__ecdHost; }catch(e){ return false; } }
+function fb(){ return document.querySelector('.filterband'); }
+var PRE=[['all','All upcoming'],['today','Today'],['weekend','This weekend'],['7','Next 7 days'],['month','This month'],['custom','Pick dates…']];
+var bar=document.createElement('div'); bar.className='slimbar';
+bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Event, venue, or keyword"></label>'
+ +'<select class="sb-pill sb-date" aria-label="When">'+PRE.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>';}).join('')+'</select>'
+ +'<button class="sb-pill sb-types" type="button"></button><span class="sb-grow"></span><span class="sb-fmt"></span>'
+ +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
+var F=fb(); if(!F) return;
+F.parentNode.insertBefore(bar, F.nextSibling);
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
+var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
+
+function apply(){
+  var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
+  R.classList.toggle('short', short);
+  var c=short && LOCKED && host() && !EXP;
+  R.classList.toggle('compact', c);
+  R.classList.toggle('expanded', short && EXP);
+}
+function expand(){ EXP=true; apply(); }
+less.addEventListener('click', function(){ EXP=false; apply(); });
+bar.querySelector('.sb-all').addEventListener('click', expand);
+types.addEventListener('click', expand);
+q2.addEventListener('input', function(){ var q=document.getElementById('q'); if(!q) return; q.value=q2.value; q.dispatchEvent(new Event('input',{bubbles:true})); });
+date.addEventListener('change', function(){
+  var b=document.querySelector('#seg button[data-p="'+date.value+'"]'); if(b) b.click();
+  if(date.value==='custom') expand();
+});
+fmt.addEventListener('click', function(e){ var b=e.target.closest('[data-f]'); if(!b) return;
+  var o=document.querySelector('.seg button[data-fmt="'+b.dataset.f+'"]'); if(o) o.click(); });
+
+function sync(){
+  try{
+    if(document.activeElement!==q2) q2.value=S.q||'';
+    date.value=S.preset; date.classList.toggle('on', S.preset!=='all');
+    var chips=[].slice.call(document.querySelectorAll('#chips [data-c]')), M=chips.length, sel=S.cats.size;
+    var picked=sel? [].slice.call(S.cats) : chips.map(function(b){return b.dataset.c;});
+    var cols=(typeof CAT_COLORS!=='undefined')?CAT_COLORS:{};
+    types.innerHTML='<span class="sb-dots">'+picked.slice(0,8).map(function(c){return '<i style="background:'+(cols[c]||'#4A542F')+'"></i>';}).join('')+'</span>'
+      +((sel===0||sel===M)?'All types':(sel+' of '+M+' types'))+' ▾';
+    fmt.innerHTML=[].slice.call(document.querySelectorAll('.seg button[data-fmt]')).map(function(b){
+      return '<button type="button" class="sb-pill'+(b.classList.contains('on')?' on':'')+'" data-f="'+b.dataset.fmt+'" style="margin-left:6px">'+b.textContent+'</button>'; }).join('');
+    /* one-line count: a short "Let us know" next to the count that opens the same form */
+    var cl=document.getElementById('countline');
+    if(cl && !cl.parentElement.querySelector('.rp-inline')){
+      cl.parentElement.classList.add('rp-row');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
+        var a=document.querySelector('.rp-a a'); if(a) a.click(); });
+    }
+  }catch(x){}
+}
+var br=render; render=function(){ var r=br.apply(this,arguments); sync(); return r; };
+
+/* locked = the whole calendar is on screen (the host page has scrolled it up under the site header) */
+if('IntersectionObserver' in window && window.parent!==window){
+  var t=[]; for(var i=0;i<=20;i++) t.push(i/20); t.push(.99);
+  new IntersectionObserver(function(es){ var r=es[0].intersectionRatio;
+    var nl=r>=0.985; if(nl!==LOCKED){ LOCKED=nl; if(!nl) EXP=false; apply(); } },{threshold:t}).observe(document.body);
+}
+addEventListener('resize', apply); setInterval(apply, 1000);
+sync(); apply();
+})();</script>
 </template>
 <template id="evtpl-list">
 <meta charset="utf-8"><script>(function(){function f(){var on=false;try{on=parent!==window&&parent.document.documentElement.classList.contains('fit');}catch(e){}
@@ -2477,6 +2587,116 @@ function refresh(){ var s=sig(); if(s!==last){ try{ render(); }catch(x){} } }
 setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh(); },60000);
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
 try{ render(); }catch(x){}
+})();</script>
+<style>
+/* Nov 2: short screens (laptops) — slim filter bar once the calendar is locked under the site header,
+   one-line count, compact Featured card. Big monitors and phones unchanged. */
+.slimbar{display:none}
+html.compact .filterband{display:none}
+html.compact .slimbar{display:flex;flex:none;align-items:center;gap:10px;background:var(--sand,#D9D4CB);padding:9px 26px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);font-family:var(--label,'Montserrat',Arial,sans-serif);position:relative;z-index:5}
+.slimbar .sb-search{flex:0 1 340px;min-width:150px;display:flex;align-items:center;gap:8px;background:var(--cream,#FAF6EF);border-radius:999px;padding:6px 14px;color:var(--ink-faint,#9A948B)}
+.slimbar .sb-search input{border:0;background:transparent;outline:0;font:inherit;font-size:13px;color:var(--charcoal,#5C5648);width:100%;letter-spacing:0;text-transform:none}
+.slimbar .sb-pill{font:inherit;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal,#5C5648);
+  background:var(--cream,#FAF6EF);border:1px solid var(--line,rgba(47,93,58,.16));padding:6px 11px;border-radius:3px;white-space:nowrap;cursor:pointer;line-height:1.3}
+.slimbar .sb-pill:hover{border-color:var(--green,#4A542F)}
+.slimbar .sb-pill.on{background-color:var(--green,#4A542F);color:#fff;border-color:var(--green,#4A542F)}
+.slimbar select.sb-pill{appearance:none;-webkit-appearance:none;padding-right:24px;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 13px) 50%,calc(100% - 9px) 50%;background-size:4px 4px;background-repeat:no-repeat}
+.slimbar select.sb-pill.on{background-color:var(--green,#4A542F)}
+.slimbar .sb-dots{display:inline-flex;margin-right:7px;vertical-align:-1px}
+.slimbar .sb-dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--cream,#FAF6EF);margin-right:-3px;display:inline-block}
+.slimbar .sb-grow{flex:1}
+.slimbar .sb-all{background:var(--gold,#BE9754);border-color:var(--gold,#BE9754);color:#fff}
+.slimbar .sb-all:hover{background:var(--gold-dark,#A67F41);border-color:var(--gold-dark,#A67F41)}
+.sb-less{display:none}
+html.short.expanded .sb-less{display:inline-block;margin-left:auto;font-family:var(--label,'Montserrat',Arial,sans-serif);font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--gold,#BE9754);color:#fff;border:0;border-radius:3px;padding:6px 12px;cursor:pointer}
+/* one-line count card */
+.rp-inline{display:none}
+html.short .rp-a{display:none !important}
+html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
+html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
+html.short .rp-row{flex-wrap:nowrap !important}
+html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
+/* compact Featured card */
+html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
+html.short .fxA .bd{padding:11px 16px}
+html.short .fx-title{font-size:17px}
+html.short .fx-sub{font-size:13px}
+html.short .fx-meta{font-size:13px;margin-top:4px}
+html.short .fx-host{display:none}
+html.short .fx-desc{font-size:13px;line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.short .fx-ft{padding-top:7px}
+html.short .fx-btn{padding:7px 14px}
+</style>
+<script>(function(){
+var R=document.documentElement, LOCKED=false, EXP=false;
+function host(){ try{ return !!parent.__ecdHost; }catch(e){ return false; } }
+function fb(){ return document.querySelector('.filterband'); }
+var PRE=[['all','All upcoming'],['today','Today'],['weekend','This weekend'],['7','Next 7 days'],['month','This month'],['custom','Pick dates…']];
+var bar=document.createElement('div'); bar.className='slimbar';
+bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Event, venue, or keyword"></label>'
+ +'<select class="sb-pill sb-date" aria-label="When">'+PRE.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>';}).join('')+'</select>'
+ +'<button class="sb-pill sb-types" type="button"></button><span class="sb-grow"></span><span class="sb-fmt"></span>'
+ +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
+var F=fb(); if(!F) return;
+F.parentNode.insertBefore(bar, F.nextSibling);
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
+var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
+
+function apply(){
+  var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
+  R.classList.toggle('short', short);
+  var c=short && LOCKED && host() && !EXP;
+  R.classList.toggle('compact', c);
+  R.classList.toggle('expanded', short && EXP);
+}
+function expand(){ EXP=true; apply(); }
+less.addEventListener('click', function(){ EXP=false; apply(); });
+bar.querySelector('.sb-all').addEventListener('click', expand);
+types.addEventListener('click', expand);
+q2.addEventListener('input', function(){ var q=document.getElementById('q'); if(!q) return; q.value=q2.value; q.dispatchEvent(new Event('input',{bubbles:true})); });
+date.addEventListener('change', function(){
+  var b=document.querySelector('#seg button[data-p="'+date.value+'"]'); if(b) b.click();
+  if(date.value==='custom') expand();
+});
+fmt.addEventListener('click', function(e){ var b=e.target.closest('[data-f]'); if(!b) return;
+  var o=document.querySelector('.seg button[data-fmt="'+b.dataset.f+'"]'); if(o) o.click(); });
+
+function sync(){
+  try{
+    if(document.activeElement!==q2) q2.value=S.q||'';
+    date.value=S.preset; date.classList.toggle('on', S.preset!=='all');
+    var chips=[].slice.call(document.querySelectorAll('#chips [data-c]')), M=chips.length, sel=S.cats.size;
+    var picked=sel? [].slice.call(S.cats) : chips.map(function(b){return b.dataset.c;});
+    var cols=(typeof CAT_COLORS!=='undefined')?CAT_COLORS:{};
+    types.innerHTML='<span class="sb-dots">'+picked.slice(0,8).map(function(c){return '<i style="background:'+(cols[c]||'#4A542F')+'"></i>';}).join('')+'</span>'
+      +((sel===0||sel===M)?'All types':(sel+' of '+M+' types'))+' ▾';
+    fmt.innerHTML=[].slice.call(document.querySelectorAll('.seg button[data-fmt]')).map(function(b){
+      return '<button type="button" class="sb-pill'+(b.classList.contains('on')?' on':'')+'" data-f="'+b.dataset.fmt+'" style="margin-left:6px">'+b.textContent+'</button>'; }).join('');
+    /* one-line count: a short "Let us know" next to the count that opens the same form */
+    var cl=document.getElementById('countline');
+    if(cl && !cl.parentElement.querySelector('.rp-inline')){
+      cl.parentElement.classList.add('rp-row');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
+        var a=document.querySelector('.rp-a a'); if(a) a.click(); });
+    }
+  }catch(x){}
+}
+var br=render; render=function(){ var r=br.apply(this,arguments); sync(); return r; };
+
+/* locked = the whole calendar is on screen (the host page has scrolled it up under the site header) */
+if('IntersectionObserver' in window && window.parent!==window){
+  var t=[]; for(var i=0;i<=20;i++) t.push(i/20); t.push(.99);
+  new IntersectionObserver(function(es){ var r=es[0].intersectionRatio;
+    var nl=r>=0.985; if(nl!==LOCKED){ LOCKED=nl; if(!nl) EXP=false; apply(); } },{threshold:t}).observe(document.body);
+}
+addEventListener('resize', apply); setInterval(apply, 1000);
+sync(); apply();
 })();</script>
 </template>
 <template id="evtpl-cal">
@@ -3353,6 +3573,116 @@ function refresh(){ var s=sig(); if(s!==last){ try{ render(); }catch(x){} } }
 setInterval(function(){ if(!document.hidden && Date.now()-act>4*60000) refresh(); },60000);
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) refresh(); });
 try{ render(); }catch(x){}
+})();</script>
+<style>
+/* Nov 2: short screens (laptops) — slim filter bar once the calendar is locked under the site header,
+   one-line count, compact Featured card. Big monitors and phones unchanged. */
+.slimbar{display:none}
+html.compact .filterband{display:none}
+html.compact .slimbar{display:flex;flex:none;align-items:center;gap:10px;background:var(--sand,#D9D4CB);padding:9px 26px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);font-family:var(--label,'Montserrat',Arial,sans-serif);position:relative;z-index:5}
+.slimbar .sb-search{flex:0 1 340px;min-width:150px;display:flex;align-items:center;gap:8px;background:var(--cream,#FAF6EF);border-radius:999px;padding:6px 14px;color:var(--ink-faint,#9A948B)}
+.slimbar .sb-search input{border:0;background:transparent;outline:0;font:inherit;font-size:13px;color:var(--charcoal,#5C5648);width:100%;letter-spacing:0;text-transform:none}
+.slimbar .sb-pill{font:inherit;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal,#5C5648);
+  background:var(--cream,#FAF6EF);border:1px solid var(--line,rgba(47,93,58,.16));padding:6px 11px;border-radius:3px;white-space:nowrap;cursor:pointer;line-height:1.3}
+.slimbar .sb-pill:hover{border-color:var(--green,#4A542F)}
+.slimbar .sb-pill.on{background-color:var(--green,#4A542F);color:#fff;border-color:var(--green,#4A542F)}
+.slimbar select.sb-pill{appearance:none;-webkit-appearance:none;padding-right:24px;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 13px) 50%,calc(100% - 9px) 50%;background-size:4px 4px;background-repeat:no-repeat}
+.slimbar select.sb-pill.on{background-color:var(--green,#4A542F)}
+.slimbar .sb-dots{display:inline-flex;margin-right:7px;vertical-align:-1px}
+.slimbar .sb-dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--cream,#FAF6EF);margin-right:-3px;display:inline-block}
+.slimbar .sb-grow{flex:1}
+.slimbar .sb-all{background:var(--gold,#BE9754);border-color:var(--gold,#BE9754);color:#fff}
+.slimbar .sb-all:hover{background:var(--gold-dark,#A67F41);border-color:var(--gold-dark,#A67F41)}
+.sb-less{display:none}
+html.short.expanded .sb-less{display:inline-block;margin-left:auto;font-family:var(--label,'Montserrat',Arial,sans-serif);font-size:10.5px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;background:var(--gold,#BE9754);color:#fff;border:0;border-radius:3px;padding:6px 12px;cursor:pointer}
+/* one-line count card */
+.rp-inline{display:none}
+html.short .rp-a{display:none !important}
+html.short .rp-inline{display:inline;margin-left:12px;font-size:13px;color:var(--ink-mute,#6E6A63);white-space:nowrap}
+html.short .rp-inline a{color:var(--charcoal,#3a3a3a);text-decoration:underline;cursor:pointer}
+html.short .rp-row{flex-wrap:nowrap !important}
+html.short .rp-head{padding:8px 18px !important;margin-bottom:8px !important}
+/* compact Featured card */
+html.short .fxA img{width:150px !important;height:auto !important;object-fit:cover !important;object-position:center !important}
+html.short .fxA .bd{padding:11px 16px}
+html.short .fx-title{font-size:17px}
+html.short .fx-sub{font-size:13px}
+html.short .fx-meta{font-size:13px;margin-top:4px}
+html.short .fx-host{display:none}
+html.short .fx-desc{font-size:13px;line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.short .fx-ft{padding-top:7px}
+html.short .fx-btn{padding:7px 14px}
+</style>
+<script>(function(){
+var R=document.documentElement, LOCKED=false, EXP=false;
+function host(){ try{ return !!parent.__ecdHost; }catch(e){ return false; } }
+function fb(){ return document.querySelector('.filterband'); }
+var PRE=[['all','All upcoming'],['today','Today'],['weekend','This weekend'],['7','Next 7 days'],['month','This month'],['custom','Pick dates…']];
+var bar=document.createElement('div'); bar.className='slimbar';
+bar.innerHTML='<label class="sb-search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="search" placeholder="Event, venue, or keyword"></label>'
+ +'<select class="sb-pill sb-date" aria-label="When">'+PRE.map(function(p){return '<option value="'+p[0]+'">'+p[1]+'</option>';}).join('')+'</select>'
+ +'<button class="sb-pill sb-types" type="button"></button><span class="sb-grow"></span><span class="sb-fmt"></span>'
+ +'<button class="sb-pill sb-all" type="button">All filters ▾</button>';
+var F=fb(); if(!F) return;
+F.parentNode.insertBefore(bar, F.nextSibling);
+var less=document.createElement('button'); less.className='sb-less'; less.type='button'; less.textContent='Fewer filters ▴';
+var rows=document.querySelectorAll('#filters .frow'), lastRow=rows[rows.length-1]; if(lastRow) lastRow.appendChild(less);
+var q2=bar.querySelector('input'), date=bar.querySelector('.sb-date'), types=bar.querySelector('.sb-types'), fmt=bar.querySelector('.sb-fmt');
+
+function apply(){
+  var short=R.classList.contains('fit') && window.innerHeight<900 && innerWidth>940;
+  R.classList.toggle('short', short);
+  var c=short && LOCKED && host() && !EXP;
+  R.classList.toggle('compact', c);
+  R.classList.toggle('expanded', short && EXP);
+}
+function expand(){ EXP=true; apply(); }
+less.addEventListener('click', function(){ EXP=false; apply(); });
+bar.querySelector('.sb-all').addEventListener('click', expand);
+types.addEventListener('click', expand);
+q2.addEventListener('input', function(){ var q=document.getElementById('q'); if(!q) return; q.value=q2.value; q.dispatchEvent(new Event('input',{bubbles:true})); });
+date.addEventListener('change', function(){
+  var b=document.querySelector('#seg button[data-p="'+date.value+'"]'); if(b) b.click();
+  if(date.value==='custom') expand();
+});
+fmt.addEventListener('click', function(e){ var b=e.target.closest('[data-f]'); if(!b) return;
+  var o=document.querySelector('.seg button[data-fmt="'+b.dataset.f+'"]'); if(o) o.click(); });
+
+function sync(){
+  try{
+    if(document.activeElement!==q2) q2.value=S.q||'';
+    date.value=S.preset; date.classList.toggle('on', S.preset!=='all');
+    var chips=[].slice.call(document.querySelectorAll('#chips [data-c]')), M=chips.length, sel=S.cats.size;
+    var picked=sel? [].slice.call(S.cats) : chips.map(function(b){return b.dataset.c;});
+    var cols=(typeof CAT_COLORS!=='undefined')?CAT_COLORS:{};
+    types.innerHTML='<span class="sb-dots">'+picked.slice(0,8).map(function(c){return '<i style="background:'+(cols[c]||'#4A542F')+'"></i>';}).join('')+'</span>'
+      +((sel===0||sel===M)?'All types':(sel+' of '+M+' types'))+' ▾';
+    fmt.innerHTML=[].slice.call(document.querySelectorAll('.seg button[data-fmt]')).map(function(b){
+      return '<button type="button" class="sb-pill'+(b.classList.contains('on')?' on':'')+'" data-f="'+b.dataset.fmt+'" style="margin-left:6px">'+b.textContent+'</button>'; }).join('');
+    /* one-line count: a short "Let us know" next to the count that opens the same form */
+    var cl=document.getElementById('countline');
+    if(cl && !cl.parentElement.querySelector('.rp-inline')){
+      cl.parentElement.classList.add('rp-row');
+      cl.insertAdjacentHTML('afterend','<span class="rp-inline">· Errors or omissions? <a role="button" tabindex="0">Let us know</a></span>');
+      cl.parentElement.querySelector('.rp-inline a').addEventListener('click', function(){
+        var a=document.querySelector('.rp-a a'); if(a) a.click(); });
+    }
+  }catch(x){}
+}
+var br=render; render=function(){ var r=br.apply(this,arguments); sync(); return r; };
+
+/* locked = the whole calendar is on screen (the host page has scrolled it up under the site header) */
+if('IntersectionObserver' in window && window.parent!==window){
+  var t=[]; for(var i=0;i<=20;i++) t.push(i/20); t.push(.99);
+  new IntersectionObserver(function(es){ var r=es[0].intersectionRatio;
+    var nl=r>=0.985; if(nl!==LOCKED){ LOCKED=nl; if(!nl) EXP=false; apply(); } },{threshold:t}).observe(document.body);
+}
+addEventListener('resize', apply); setInterval(apply, 1000);
+sync(); apply();
 })();</script>
 </template>
 <script>
