@@ -3,19 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Jazz Guitar Night with Clint Dadian
+X-WR-CALNAME:Guitar Night: Clint Dadian & Wayne Wilkinson
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-11-04-17-00-137708@hummingbird.localbeat
-DTSTAMP:20261103T195724Z
+DTSTAMP:20261104T124833Z
 DTSTART:20261105T000000Z
 DTEND:20261105T030000Z
-SUMMARY:Jazz Guitar Night with Clint Dadian
-DESCRIPTION:Clint Dadian and a rotating guest guitarist play jazz guitar du
- os through dinner.\n\nReserve a table: https://evergreenhummingbird.com/re
- servations
+SUMMARY:Guitar Night: Clint Dadian & Wayne Wilkinson
+DESCRIPTION:Clint Dadian's Wednesday guitar night\, this week with Wayne Wi
+ lkinson. Guitar duos all through dinner\, 5 to 8 PM.\n\nReserve a table: h
+ ttps://evergreenhummingbird.com/reservations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
