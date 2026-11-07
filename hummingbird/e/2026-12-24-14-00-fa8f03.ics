@@ -3,19 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Christmas Eve Brunch Music
+X-WR-CALNAME:Christmas Eve Brunch with the Christmas Trio
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-12-24-14-00-fa8f03@hummingbird.localbeat
-DTSTAMP:20261106T195542Z
+DTSTAMP:20261107T041658Z
 DTSTART:20261224T210000Z
 DTEND:20261225T000000Z
-SUMMARY:Christmas Eve Brunch Music
-DESCRIPTION:Live music during Christmas Eve brunch at the Hummingbird Club\
- , from 2 to 5 PM.\n\nReserve a table: https://evergreenhummingbird.com/res
- ervations
+SUMMARY:Christmas Eve Brunch with the Christmas Trio
+DESCRIPTION:The Christmas Trio plays live during our Christmas Eve brunch a
+ t the Hummingbird Club. Join us for a festive afternoon.\n\nReserve a tabl
+ e: https://evergreenhummingbird.com/reservations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
