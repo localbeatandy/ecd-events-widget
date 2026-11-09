@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Jazz Guitar Night
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-11-25-17-30-extra-66404d@hummingbird.localbeat
+DTSTAMP:20261109T185959Z
+DTSTART:20261126T003000Z
+DTEND:20261126T033000Z
+SUMMARY:Jazz Guitar Night
+DESCRIPTION:Jazz guitar to go with dinner on Wednesday evening\, from 5:30 
+ to 8:30 PM.\n\nTickets: https://members.evergreenchamber.org/events/detail
+ s/jazz-guitar-night-11-25-2026-109106
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://members.evergreenchamber.org/events/details/jazz-guitar-night-1
+ 1-25-2026-109106
+END:VEVENT
+END:VCALENDAR
