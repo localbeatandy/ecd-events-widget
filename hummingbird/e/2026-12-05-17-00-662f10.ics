@@ -3,18 +3,19 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Kismet Jazz
+X-WR-CALNAME:Kismet Jazz Trio
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
 UID:2026-12-05-17-00-662f10@hummingbird.localbeat
-DTSTAMP:20261117T022746Z
+DTSTAMP:20261117T024535Z
 DTSTART:20261206T000000Z
 DTEND:20261206T030000Z
-SUMMARY:Kismet Jazz
-DESCRIPTION:Kismet Jazz plays a trio set for Saturday dinner.\n\nReserve a 
- table: https://evergreenhummingbird.com/reservations
+SUMMARY:Kismet Jazz Trio
+DESCRIPTION:The Kismet Jazz trio plays live music during Saturday dinner at
+  the Hummingbird.\n\nReserve a table: https://evergreenhummingbird.com/res
+ ervations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
