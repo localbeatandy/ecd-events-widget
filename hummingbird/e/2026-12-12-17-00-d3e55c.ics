@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Guitar Night with Will Morrison
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2026-12-12-17-00-d3e55c@hummingbird.localbeat
+DTSTAMP:20261119T232256Z
+DTSTART:20261213T000000Z
+DTEND:20261213T030000Z
+SUMMARY:Guitar Night with Will Morrison
+DESCRIPTION:Will Morrison plays guitar during Saturday dinner at the Hummin
+ gbird Club\, from 5 to 8 PM.\n\nReserve a table: https://evergreenhummingb
+ ird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
