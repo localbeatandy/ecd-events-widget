@@ -3,18 +3,18 @@ VERSION:2.0
 PRODID:-//LocalBeat//Hummingbird Club events//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Fernandi & Lopey
+X-WR-CALNAME:Piano Night
 X-WR-TIMEZONE:America/Denver
 REFRESH-INTERVAL;VALUE=DURATION:PT12H
 X-PUBLISHED-TTL:PT12H
 BEGIN:VEVENT
-UID:2026-11-21-17-00-b3eba2@hummingbird.localbeat
-DTSTAMP:20261121T234737Z
-DTSTART:20261122T000000Z
-DTEND:20261122T030000Z
-SUMMARY:Fernandi & Lopey
-DESCRIPTION:Fernandi & Lopey play a duo set for Saturday dinner.\n\nReserve
-  a table: https://evergreenhummingbird.com/reservations
+UID:2027-02-23-17-00-0f15a4@hummingbird.localbeat
+DTSTAMP:20261122T153120Z
+DTSTART:20270224T000000Z
+DTEND:20270224T030000Z
+SUMMARY:Piano Night
+DESCRIPTION:Solo piano with dinner\, a Tuesday-night tradition at the Hummi
+ ngbird.\n\nReserve a table: https://evergreenhummingbird.com/reservations
 LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
 URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
 END:VEVENT
