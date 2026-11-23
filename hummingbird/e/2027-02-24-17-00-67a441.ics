@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//LocalBeat//Hummingbird Club events//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Guitar Night
+X-WR-TIMEZONE:America/Denver
+REFRESH-INTERVAL;VALUE=DURATION:PT12H
+X-PUBLISHED-TTL:PT12H
+BEGIN:VEVENT
+UID:2027-02-24-17-00-67a441@hummingbird.localbeat
+DTSTAMP:20261123T154056Z
+DTSTART:20270225T000000Z
+DTEND:20270225T030000Z
+SUMMARY:Guitar Night
+DESCRIPTION:A guitar duo plays live during dinner at the Hummingbird Club t
+ his Wednesday evening\, from 5 to 8 PM.\n\nReserve a table: https://evergr
+ eenhummingbird.com/reservations
+LOCATION:Hummingbird Club\, 1338 County Rd 65\, Evergreen\, CO 80439
+URL:https://localbeatandy.github.io/ecd-events-widget/hummingbird/
+END:VEVENT
+END:VCALENDAR
